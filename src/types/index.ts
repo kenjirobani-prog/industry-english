@@ -15,6 +15,32 @@ export type Scene = {
   name_en: string;
   description_ja: string;
   emoji: string;
+  phrases?: Phrase[];
+  passages?: Passage[];
+};
+
+export type Phrase = {
+  id: string;
+  industryId: string;
+  sceneIds: string[];
+  phrase: string;
+  meaning_ja: string;
+  usage_context: string;
+  examples: Example[];
+};
+
+export type ShadowingDifficulty = 'easy' | 'medium' | 'hard';
+
+export type Passage = {
+  id: string;
+  industryId: string;
+  sceneIds: string[];
+  text: string;
+  translation_ja: string;
+  source: string;
+  scene: string;
+  key_terms: string[];
+  shadowing_difficulty: ShadowingDifficulty;
 };
 
 export type Example = {
@@ -40,6 +66,8 @@ export type SeedData = {
   industries: Industry[];
   scenes: Scene[];
   keywords: Keyword[];
+  phrases: Phrase[];
+  passages: Passage[];
 };
 
 export type EnglishLevel = 'beginner' | 'intermediate' | 'advanced';

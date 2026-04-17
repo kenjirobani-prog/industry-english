@@ -32,6 +32,14 @@
   --accent-soft: rgba(176, 126, 30, 0.10);
 }
 
+/* AI / Machine Learning accent override (emerald) */
+[data-industry='ai'] {
+  --accent: #047857;
+  --accent-strong: #065f46;
+  --accent-on-dark: #34d399;
+  --accent-soft: rgba(4, 120, 87, 0.10);
+}
+
 @theme inline {
   --color-apple-white: var(--apple-white);
   --color-apple-black: var(--apple-black);

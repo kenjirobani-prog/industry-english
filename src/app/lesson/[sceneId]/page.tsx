@@ -7,11 +7,15 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { ProgressBar } from '@/components/ProgressBar';
 import { KeywordCard } from '@/components/KeywordCard';
 import { ExampleCard } from '@/components/ExampleCard';
+import { PhraseCard } from '@/components/PhraseCard';
+import { PassageSelector } from '@/components/PassageSelector';
 import { ShadowingPlayer } from '@/components/ShadowingPlayer';
 import { QuizCard } from '@/components/QuizCard';
 import {
   getKeywordsByIndustry,
   getKeywordsByScene,
+  getPassagesByScene,
+  getPhrasesByScene,
   getScene,
 } from '@/lib/data';
 import { recordLessonComplete } from '@/lib/storage';
@@ -33,11 +37,24 @@ export default function LessonPage({ params }: { params: Params }) {
     () => (scene ? getKeywordsByIndustry(scene.industryId) : []),
     [scene],
   );
+  const scenePhrases = useMemo(
+    () => (scene ? getPhrasesByScene(scene.id) : []),
+    [scene],
+  );
+  const scenePassages = useMemo(
+    () => (scene ? getPassagesByScene(scene.id) : []),
+    [scene],
+  );
 
   const [kwIndex, setKwIndex] = useState(0);
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [done, setDone] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
+  const [selectedSourceKey, setSelectedSourceKey] = useState<string>('short');
+  const [shadowText, setShadowText] = useState<{
+    text: string;
+    translation: string;
+  } | null>(null);
 
   useEffect(() => {
     warmupVoices();
@@ -75,6 +92,40 @@ export default function LessonPage({ params }: { params: Params }) {
   const currentKw = sceneKeywords[kwIndex];
   const example = currentKw.examples[0];
   const distractors = industryKeywords.filter((k) => k.id !== currentKw.id);
+
+  // Pick the phrase that best matches the current keyword (term mention),
+  // else round-robin across phrases for the scene.
+  const currentPhrase = (() => {
+    if (scenePhrases.length === 0) return null;
+    const lower = currentKw.term.toLowerCase();
+    const match = scenePhrases.find(
+      (p) =>
+        p.phrase.toLowerCase().includes(lower) ||
+        p.examples.some((e) =>
+          e.sentence.toLowerCase().includes(lower),
+        ),
+    );
+    return match ?? scenePhrases[kwIndex % scenePhrases.length];
+  })();
+
+  // Default the shadowing source to the short example when the user enters Step 3.
+  useEffect(() => {
+    if (step !== 3) return;
+    if (shadowText !== null && selectedSourceKey !== 'short') return;
+    if (example) {
+      setShadowText({
+        text: example.sentence,
+        translation: example.translation,
+      });
+      setSelectedSourceKey('short');
+    }
+  }, [step, example, shadowText, selectedSourceKey]);
+
+  // Reset shadowing selection when keyword changes.
+  useEffect(() => {
+    setShadowText(null);
+    setSelectedSourceKey('short');
+  }, [kwIndex]);
 
   const handleNext = () => {
     if (step < 4) setStep((s) => (s + 1) as 1 | 2 | 3 | 4);
@@ -156,17 +207,45 @@ export default function LessonPage({ params }: { params: Params }) {
 
           <ProgressBar current={step} total={4} labels={STEP_LABELS} />
 
-          <div className="pt-2">
+          <div className="pt-2 space-y-4">
             {step === 1 && <KeywordCard keyword={currentKw} />}
-            {step === 2 && example && (
-              <ExampleCard example={example} highlightTerm={currentKw.term} />
+            {step === 2 && (
+              <>
+                {example && (
+                  <ExampleCard
+                    example={example}
+                    highlightTerm={currentKw.term}
+                  />
+                )}
+                {currentPhrase && <PhraseCard phrase={currentPhrase} />}
+              </>
             )}
             {step === 3 && example && (
-              <ShadowingPlayer
-                keywordId={currentKw.id}
-                sentence={example.sentence}
-                translation={example.translation}
-              />
+              <>
+                <PassageSelector
+                  selectedKey={selectedSourceKey}
+                  shortExample={{
+                    sentence: example.sentence,
+                    translation: example.translation,
+                  }}
+                  passages={scenePassages}
+                  onSelect={(s) => {
+                    setSelectedSourceKey(s.key);
+                    setShadowText({
+                      text: s.text,
+                      translation: s.translation,
+                    });
+                  }}
+                />
+                {shadowText && (
+                  <ShadowingPlayer
+                    key={`${currentKw.id}-${selectedSourceKey}`}
+                    keywordId={currentKw.id}
+                    sentence={shadowText.text}
+                    translation={shadowText.translation}
+                  />
+                )}
+              </>
             )}
             {step === 4 && (
               <QuizCard

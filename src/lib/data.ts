@@ -1,5 +1,12 @@
 import seed from '@/data/seed.json';
-import type { Industry, Keyword, Scene, SeedData } from '@/types';
+import type {
+  Industry,
+  Keyword,
+  Passage,
+  Phrase,
+  Scene,
+  SeedData,
+} from '@/types';
 
 const data = seed as unknown as SeedData;
 
@@ -35,4 +42,28 @@ export function getKeywordsByIndustry(industryId: string): Keyword[] {
 
 export function getKeyword(id: string): Keyword | undefined {
   return data.keywords.find((k) => k.id === id);
+}
+
+export function getPhrases(): Phrase[] {
+  return data.phrases ?? [];
+}
+
+export function getPhrasesByScene(sceneId: string): Phrase[] {
+  return (data.phrases ?? []).filter((p) => p.sceneIds.includes(sceneId));
+}
+
+export function getPhrasesByIndustry(industryId: string): Phrase[] {
+  return (data.phrases ?? []).filter((p) => p.industryId === industryId);
+}
+
+export function getPassages(): Passage[] {
+  return data.passages ?? [];
+}
+
+export function getPassagesByScene(sceneId: string): Passage[] {
+  return (data.passages ?? []).filter((p) => p.sceneIds.includes(sceneId));
+}
+
+export function getPassagesByIndustry(industryId: string): Passage[] {
+  return (data.passages ?? []).filter((p) => p.industryId === industryId);
 }
