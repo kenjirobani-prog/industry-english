@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { analyzeText } from '@/lib/analyzer';
+import { analyzeText, type IndustryProfile } from '@/lib/analyzer';
+import { getIndustry, getScenes } from '@/lib/data';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -35,14 +36,35 @@ async function extractText(file: File): Promise<string> {
   throw new Error('Unsupported file type');
 }
 
+function resolveIndustry(industryId: unknown): IndustryProfile {
+  const id = typeof industryId === 'string' && industryId ? industryId : 'fnb';
+  const industry = getIndustry(id) ?? getIndustry('fnb');
+  if (!industry) throw new Error('No industry data available');
+  const scenes = getScenes(industry.id).map((s) => ({
+    id: s.id,
+    name_en: s.name_en,
+    name_ja: s.name_ja,
+  }));
+  return {
+    id: industry.id,
+    name_en: industry.name_en,
+    name_ja: industry.name_ja,
+    description_ja: industry.description_ja,
+    scenes,
+  };
+}
+
 export async function POST(request: Request) {
   let file: File | null = null;
+  let industry: IndustryProfile;
   try {
     const form = await request.formData();
     const f = form.get('file');
     if (f instanceof File) file = f;
-  } catch {
-    return NextResponse.json({ error: 'Invalid form data' }, { status: 400 });
+    industry = resolveIndustry(form.get('industryId'));
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Invalid form data';
+    return NextResponse.json({ error: msg }, { status: 400 });
   }
 
   if (!file) {
@@ -81,7 +103,11 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await analyzeText(text, { type: 'file', ref: file.name });
+    const result = await analyzeText(
+      text,
+      { type: 'file', ref: file.name },
+      industry,
+    );
     return NextResponse.json(result);
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Analysis failed';

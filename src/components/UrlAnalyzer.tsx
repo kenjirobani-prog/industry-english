@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { AnalysisResult } from '@/types';
+import { getPreferences } from '@/lib/storage';
 
 type Status = 'idle' | 'analyzing' | 'done' | 'error';
 
@@ -21,10 +22,11 @@ export function UrlAnalyzer({ onResult }: Props) {
     setStatus('analyzing');
     setErrorMsg(null);
     try {
+      const industryId = getPreferences()?.industryId;
       const res = await fetch('/api/analyze-url', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: trimmed }),
+        body: JSON.stringify({ url: trimmed, industryId }),
       });
       const data = (await res.json()) as
         | (AnalysisResult & { error?: undefined })

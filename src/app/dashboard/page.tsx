@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
 import {
   getIndustry,
-  getKeywords,
+  getKeywordsByIndustry,
   getKeywordsByScene,
   getScene,
   getScenes,
@@ -20,6 +20,7 @@ import {
 export default function DashboardPage() {
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
+  const [industryId, setIndustryId] = useState<string | null>(null);
   const [industryName, setIndustryName] = useState<string | null>(null);
   const [activeSceneIds, setActiveSceneIds] = useState<string[]>([]);
   const [masteredCount, setMasteredCount] = useState(0);
@@ -32,6 +33,7 @@ export default function DashboardPage() {
       return;
     }
     const industry = getIndustry(prefs.industryId);
+    setIndustryId(prefs.industryId);
     setIndustryName(industry?.name_ja ?? null);
     setActiveSceneIds(prefs.sceneIds);
     setMasteredCount(getMasteredKeywordIds().length);
@@ -39,7 +41,7 @@ export default function DashboardPage() {
     setHydrated(true);
   }, [router]);
 
-  if (!hydrated) {
+  if (!hydrated || !industryId) {
     return (
       <main className="flex-1 flex items-center justify-center text-amber-200/60 font-display tracking-widest text-sm">
         Loading…
@@ -47,8 +49,9 @@ export default function DashboardPage() {
     );
   }
 
-  const totalKeywords = getKeywords().length;
-  const allScenes = getScenes('fnb');
+  const industryKeywords = getKeywordsByIndustry(industryId);
+  const totalKeywords = industryKeywords.length;
+  const allScenes = getScenes(industryId);
   const todayScenes = allScenes.filter((s) => activeSceneIds.includes(s.id));
 
   return (

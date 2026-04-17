@@ -3,24 +3,39 @@
 import { useEffect, useMemo, useState } from 'react';
 import { SiteHeader } from '@/components/SiteHeader';
 import { KeywordCard } from '@/components/KeywordCard';
-import { getKeywords, getScenes } from '@/lib/data';
-import { getBookmarks, getUserKeywords } from '@/lib/storage';
+import { getIndustries, getKeywords, getScenes } from '@/lib/data';
+import { getBookmarks, getPreferences, getUserKeywords } from '@/lib/storage';
 import type { Keyword, UserKeyword } from '@/types';
 
 export default function LibraryPage() {
+  const [industryFilter, setIndustryFilter] = useState<string>('all');
   const [sceneFilter, setSceneFilter] = useState<string>('all');
   const [bookmarksOnly, setBookmarksOnly] = useState(false);
   const [userOnly, setUserOnly] = useState(false);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [userKeywords, setUserKeywords] = useState<UserKeyword[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     setBookmarks(getBookmarks());
     setUserKeywords(getUserKeywords());
-  }, [openId]);
+    if (!hydrated) {
+      // Default the industry filter to the user's current selection.
+      const prefs = getPreferences();
+      if (prefs?.industryId) setIndustryFilter(prefs.industryId);
+      setHydrated(true);
+    }
+  }, [openId, hydrated]);
 
-  const scenes = useMemo(() => getScenes('fnb'), []);
+  const availableIndustries = useMemo(
+    () => getIndustries().filter((i) => i.available),
+    [],
+  );
+  const scenes = useMemo(() => {
+    if (industryFilter === 'all') return getScenes();
+    return getScenes(industryFilter);
+  }, [industryFilter]);
   const userIdSet = useMemo(
     () => new Set(userKeywords.map((k) => k.id)),
     [userKeywords],
@@ -31,6 +46,9 @@ export default function LibraryPage() {
   );
   const keywords = useMemo(() => {
     let list = allKeywords;
+    if (industryFilter !== 'all') {
+      list = list.filter((k) => k.industryId === industryFilter);
+    }
     if (sceneFilter !== 'all') {
       list = list.filter((k) => k.sceneIds.includes(sceneFilter));
     }
@@ -42,7 +60,22 @@ export default function LibraryPage() {
       list = list.filter((k) => userIdSet.has(k.id));
     }
     return list;
-  }, [allKeywords, sceneFilter, bookmarksOnly, userOnly, bookmarks, userIdSet]);
+  }, [
+    allKeywords,
+    industryFilter,
+    sceneFilter,
+    bookmarksOnly,
+    userOnly,
+    bookmarks,
+    userIdSet,
+  ]);
+
+  // Reset scene filter if it doesn't belong to the chosen industry.
+  useEffect(() => {
+    if (sceneFilter === 'all') return;
+    const ok = scenes.some((s) => s.id === sceneFilter);
+    if (!ok) setSceneFilter('all');
+  }, [scenes, sceneFilter]);
 
   return (
     <>
@@ -59,7 +92,41 @@ export default function LibraryPage() {
             </p>
           </div>
 
-          {/* Filters */}
+          {/* Industry filter */}
+          <div className="mb-3">
+            <div className="text-[10px] font-display tracking-widest uppercase text-amber-200/60 mb-2">
+              業界
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIndustryFilter('all')}
+                className={`text-xs rounded-full px-3 py-1.5 border transition ${
+                  industryFilter === 'all'
+                    ? 'bg-gold/20 border-gold text-amber-100'
+                    : 'bg-surface-1 border-border-soft text-amber-100/60 hover:border-gold/40'
+                }`}
+              >
+                全業界
+              </button>
+              {availableIndustries.map((ind) => (
+                <button
+                  key={ind.id}
+                  type="button"
+                  onClick={() => setIndustryFilter(ind.id)}
+                  className={`text-xs rounded-full px-3 py-1.5 border transition ${
+                    industryFilter === ind.id
+                      ? 'bg-gold/20 border-gold text-amber-100'
+                      : 'bg-surface-1 border-border-soft text-amber-100/60 hover:border-gold/40'
+                  }`}
+                >
+                  {ind.name_ja}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Scene + flag filters */}
           <div className="flex flex-wrap items-center gap-2 mb-6">
             <button
               type="button"

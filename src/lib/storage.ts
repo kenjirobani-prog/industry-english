@@ -58,6 +58,9 @@ export function getPreferences(): UserPreferences | null {
 
 export function setPreferences(prefs: UserPreferences): void {
   write(KEYS.prefs, prefs);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('ie:preferences-changed'));
+  }
 }
 
 export function clearPreferences(): void {
@@ -142,6 +145,9 @@ export function addUserKeywords(
   const existingTerms = new Set(
     existing.map((k) => k.term.toLowerCase()),
   );
+  const prefs = getPreferences();
+  const industryId = prefs?.industryId ?? 'fnb';
+  const fallbackScene = prefs?.sceneIds?.[0] ?? 'brand-strategy';
   const now = new Date().toISOString();
   const newOnes: UserKeyword[] = extracted
     .filter((k) => !existingTerms.has(k.term.toLowerCase()))
@@ -151,8 +157,8 @@ export function addUserKeywords(
       );
       return {
         id: `user-${Date.now()}-${i}-${k.term.replace(/\W+/g, '-').toLowerCase()}`,
-        industryId: 'fnb',
-        sceneIds: sceneIds.length > 0 ? sceneIds : ['brand-strategy'],
+        industryId,
+        sceneIds: sceneIds.length > 0 ? sceneIds : [fallbackScene],
         term: k.term,
         meaning_ja: k.meaning_ja,
         meaning_industry: k.meaning_industry,

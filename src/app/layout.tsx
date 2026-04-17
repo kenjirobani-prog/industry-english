@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Cinzel, Outfit } from 'next/font/google';
+import { IndustryThemeProvider } from '@/components/IndustryThemeProvider';
 import './globals.css';
 
 const display = Cinzel({
@@ -30,7 +31,10 @@ export default function RootLayout({
       lang="ja"
       className={`${display.variable} ${body.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <IndustryThemeProvider />
+        {children}
+      </body>
     </html>
   );
 }

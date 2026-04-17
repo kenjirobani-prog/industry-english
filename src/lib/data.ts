@@ -29,6 +29,10 @@ export function getKeywordsByScene(sceneId: string): Keyword[] {
   return data.keywords.filter((k) => k.sceneIds.includes(sceneId));
 }
 
+export function getKeywordsByIndustry(industryId: string): Keyword[] {
+  return data.keywords.filter((k) => k.industryId === industryId);
+}
+
 export function getKeyword(id: string): Keyword | undefined {
   return data.keywords.find((k) => k.id === id);
 }

@@ -1,25 +1,62 @@
 @import "tailwindcss";
 
+/* -------------------------------------------------------------------------
+ * Color tokens are wired so existing `amber-*` / `gold` Tailwind classes
+ * resolve through CSS variables. We override those vars per industry on
+ * `<html data-industry="...">` to swap the entire palette without touching
+ * components. Default = F&B (amber/gold).
+ * ------------------------------------------------------------------------- */
+
 :root {
   --background: #0b0907;
   --foreground: #f4ecd8;
+
+  /* F&B (default) palette */
   --amber-50: #fff8e6;
   --amber-200: #ffe9a8;
   --amber-400: #f5b042;
   --amber-500: #d98e1f;
   --amber-600: #a96510;
   --gold: #c9a35b;
+
   --surface-1: #161009;
   --surface-2: #1f180e;
   --surface-3: #2a2014;
   --border-soft: rgba(201, 163, 91, 0.18);
+
+  /* Backdrop tints (industry-aware) */
+  --backdrop-1: rgba(217, 142, 31, 0.12);
+  --backdrop-2: rgba(201, 163, 91, 0.08);
+}
+
+/* Digital Marketing — blue palette */
+[data-industry='digital-marketing'] {
+  --background: #06080d;
+  --foreground: #e6efff;
+
+  --amber-50: #eff6ff;
+  --amber-200: #bfdbfe;
+  --amber-400: #60a5fa;
+  --amber-500: #3b82f6;
+  --amber-600: #1d4ed8;
+  --gold: #38bdf8;
+
+  --surface-1: #0c1322;
+  --surface-2: #111a2e;
+  --surface-3: #182441;
+  --border-soft: rgba(96, 165, 250, 0.22);
+
+  --backdrop-1: rgba(59, 130, 246, 0.14);
+  --backdrop-2: rgba(56, 189, 248, 0.08);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-amber-50: var(--amber-50);
+  --color-amber-100: var(--amber-50);
   --color-amber-200: var(--amber-200);
+  --color-amber-300: var(--amber-200);
   --color-amber-400: var(--amber-400);
   --color-amber-500: var(--amber-500);
   --color-amber-600: var(--amber-600);
@@ -40,8 +77,8 @@ html, body {
 body {
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   background-image:
-    radial-gradient(circle at 15% 0%, rgba(217, 142, 31, 0.12), transparent 55%),
-    radial-gradient(circle at 85% 100%, rgba(201, 163, 91, 0.08), transparent 60%);
+    radial-gradient(circle at 15% 0%, var(--backdrop-1), transparent 55%),
+    radial-gradient(circle at 85% 100%, var(--backdrop-2), transparent 60%);
   background-attachment: fixed;
 }
 
@@ -50,7 +87,6 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* Subtle amber scrollbar in dark theme */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -67,8 +103,8 @@ body {
 }
 
 @keyframes pulse-amber {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(217, 142, 31, 0.55); }
-  50%      { box-shadow: 0 0 0 12px rgba(217, 142, 31, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--amber-500) 55%, transparent); }
+  50%      { box-shadow: 0 0 0 12px color-mix(in srgb, var(--amber-500) 0%, transparent); }
 }
 .pulse-amber {
   animation: pulse-amber 1.6s ease-out infinite;

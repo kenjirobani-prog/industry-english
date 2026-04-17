@@ -2,6 +2,7 @@
 
 import { useRef, useState, type DragEvent } from 'react';
 import type { AnalysisResult } from '@/types';
+import { getPreferences } from '@/lib/storage';
 
 type Status = 'idle' | 'parsing' | 'done' | 'error';
 
@@ -39,6 +40,8 @@ export function FileUpload({ onResult }: Props) {
     try {
       const form = new FormData();
       form.append('file', file);
+      const industryId = getPreferences()?.industryId;
+      if (industryId) form.append('industryId', industryId);
       const res = await fetch('/api/analyze-file', {
         method: 'POST',
         body: form,

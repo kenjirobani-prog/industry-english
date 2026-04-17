@@ -5,28 +5,36 @@ import type { AnalysisResult, AnalysisSource, ExtractedKeyword, AnalysisQuiz } f
 const MODEL = 'claude-sonnet-4-6';
 const MAX_INPUT_CHARS = 30_000; // ~7-8k tokens, keeps cost predictable
 
-const SYSTEM_PROMPT = `You are an expert F&B (Food & Beverage / spirits / whisky / beverage) industry English coach. Your learners are non-native business English users working at a Japanese spirits company who need vocabulary that they will actually encounter in brand-strategy meetings, partner negotiations, industry conferences, and business dining.
+export type IndustryProfile = {
+  id: string;
+  name_en: string;
+  name_ja: string;
+  description_ja: string;
+  scenes: { id: string; name_en: string; name_ja: string }[];
+};
 
-Given input text from an article, document, or webpage, do three things:
+const SYSTEM_PROMPT = `You are an expert business English coach helping non-native learners — typically Japanese professionals — extract industry-specific vocabulary from real-world content (articles, decks, contracts, reports). The user provides an "Industry profile" describing their domain and the scenes (business situations) where they use English.
 
-1. Extract 3 to 7 industry-specific English keywords or short phrases from the text that would be most valuable for an F&B professional to learn. Prioritize:
-   - Industry jargon (e.g., "premiumization", "RTD", "single malt", "route-to-market")
-   - Words whose meaning differs in F&B versus other industries (e.g., "innovation", "pipeline", "activation")
-   - Frequently-used commercial terms in the spirits/beverage trade
-   Avoid generic English vocabulary that any business learner would already know.
+For each request, do three things:
+
+1. Extract 3 to 7 industry-specific English keywords or short phrases from the input text that would be most valuable for a professional in that industry to learn. Prioritize:
+   - Industry jargon and terms-of-art
+   - Words whose meaning differs notably inside the industry versus general English or other industries
+   - High-frequency commercial / operational terms in that industry
+   Avoid generic English vocabulary every business learner already knows.
 
 2. For each keyword produce:
    - term: the English term
    - meaning_ja: Japanese translation/explanation
-   - meaning_industry: an English explanation of the F&B industry meaning
-   - meaning_general: OPTIONAL — only include when the term has a notably different meaning outside F&B; otherwise omit the field entirely
-   - frequency: integer 1-5 estimating how common the term is in F&B contexts (5 = very common)
-   - examples: 1 to 2 example sentences. Pull verbatim from the source text when possible; otherwise write a natural example inspired by the text. For each example provide:
-       sentence (English), translation (Japanese), source (a short label, e.g. the source URL/filename), scene (one of: brand-strategy, partner-negotiation, conference, dining)
+   - meaning_industry: an English explanation of the meaning within the user's industry
+   - meaning_general: OPTIONAL — only include when the term has a notably different meaning outside the industry; otherwise omit the field entirely
+   - frequency: integer 1-5 estimating how common the term is in the user's industry contexts (5 = very common)
+   - examples: 1 to 2 example sentences. Pull verbatim from the source text when possible; otherwise write a natural example inspired by it. For each example provide:
+       sentence (English), translation (Japanese), source (a short label, e.g. the source URL/filename), scene (must be one of the scene IDs supplied in the Industry profile)
 
-3. Generate exactly 3 multiple-choice quiz questions, in Japanese, testing the meaning or correct usage of these keywords. Each must have 4 choices and a correctIndex (0-3) and a brief Japanese explanation.
+3. Generate exactly 3 multiple-choice quiz questions, in Japanese, testing the meaning or correct usage of these keywords. Each must have 4 choices, a correctIndex (0-3), and a brief Japanese explanation.
 
-Return ONLY a single JSON object — no markdown code fences, no preamble, no trailing commentary — matching this schema exactly:
+Return ONLY a single JSON object — no markdown code fences, no preamble, no trailing commentary — matching this schema:
 
 {
   "keywords": [
@@ -41,7 +49,7 @@ Return ONLY a single JSON object — no markdown code fences, no preamble, no tr
           "sentence": "string",
           "translation": "string",
           "source": "string",
-          "scene": "brand-strategy|partner-negotiation|conference|dining"
+          "scene": "one of the supplied scene IDs"
         }
       ]
     }
@@ -60,7 +68,8 @@ Strict rules:
 - Output JSON only. No \`\`\` fences. No prose around the JSON.
 - 3 to 7 keywords. Exactly 3 quizzes.
 - Each keyword must include at least 1 example.
-- If the input is too short or off-topic to yield F&B keywords, select the closest applicable terms from your F&B domain knowledge that connect to the input's broader topic.`;
+- The "scene" field must exactly match one of the scene IDs provided in the Industry profile.
+- If the input is too short or off-topic to yield industry-relevant keywords, select the closest applicable terms from your knowledge of the supplied industry that connect to the input's broader topic.`;
 
 function truncate(text: string, max: number): string {
   if (text.length <= max) return text;
@@ -82,13 +91,6 @@ function extractJson(raw: string): unknown {
   return JSON.parse(s.slice(start, end + 1));
 }
 
-const VALID_SCENES = new Set([
-  'brand-strategy',
-  'partner-negotiation',
-  'conference',
-  'dining',
-]);
-
 function coerceFrequency(n: unknown): 1 | 2 | 3 | 4 | 5 {
   const v = typeof n === 'number' ? Math.round(n) : 3;
   if (v <= 1) return 1;
@@ -99,6 +101,7 @@ function coerceFrequency(n: unknown): 1 | 2 | 3 | 4 | 5 {
 function normalizeAnalysis(
   parsed: unknown,
   source: AnalysisSource,
+  industry: IndustryProfile,
 ): AnalysisResult {
   if (!parsed || typeof parsed !== 'object') {
     throw new Error('Model output is not an object');
@@ -106,6 +109,8 @@ function normalizeAnalysis(
   const obj = parsed as Record<string, unknown>;
   const rawKeywords = Array.isArray(obj.keywords) ? obj.keywords : [];
   const rawQuizzes = Array.isArray(obj.quizzes) ? obj.quizzes : [];
+  const validScenes = new Set(industry.scenes.map((s) => s.id));
+  const fallbackScene = industry.scenes[0]?.id ?? 'general';
 
   const keywords: ExtractedKeyword[] = rawKeywords
     .map((k): ExtractedKeyword | null => {
@@ -124,9 +129,9 @@ function normalizeAnalysis(
             typeof ex.translation === 'string' ? ex.translation.trim() : '';
           if (!sentence || !translation) return null;
           const sceneVal =
-            typeof ex.scene === 'string' && VALID_SCENES.has(ex.scene)
+            typeof ex.scene === 'string' && validScenes.has(ex.scene)
               ? ex.scene
-              : 'brand-strategy';
+              : fallbackScene;
           return {
             sentence,
             translation,
@@ -188,9 +193,25 @@ function normalizeAnalysis(
   return { source, keywords, quizzes };
 }
 
+function formatIndustryProfile(industry: IndustryProfile): string {
+  const sceneLines = industry.scenes
+    .map((s) => `  - ${s.id}: ${s.name_en} (${s.name_ja})`)
+    .join('\n');
+  return [
+    `Industry profile:`,
+    `- ID: ${industry.id}`,
+    `- Industry (English): ${industry.name_en}`,
+    `- Industry (Japanese): ${industry.name_ja}`,
+    `- Description: ${industry.description_ja}`,
+    `- Allowed scene IDs (use exactly one of these for each example.scene field):`,
+    sceneLines,
+  ].join('\n');
+}
+
 export async function analyzeText(
   text: string,
   source: AnalysisSource,
+  industry: IndustryProfile,
 ): Promise<AnalysisResult> {
   if (!process.env.ANTHROPIC_API_KEY) {
     throw new Error('ANTHROPIC_API_KEY is not configured');
@@ -214,7 +235,7 @@ export async function analyzeText(
     messages: [
       {
         role: 'user',
-        content: `Source label: ${source.ref}\n\nSource text:\n"""\n${cleaned}\n"""\n\nReturn JSON only.`,
+        content: `${formatIndustryProfile(industry)}\n\nSource label: ${source.ref}\n\nSource text:\n"""\n${cleaned}\n"""\n\nReturn JSON only.`,
       },
     ],
   });
@@ -224,5 +245,5 @@ export async function analyzeText(
     throw new Error('Empty response from model');
   }
   const parsed = extractJson(textBlock.text);
-  return normalizeAnalysis(parsed, source);
+  return normalizeAnalysis(parsed, source, industry);
 }

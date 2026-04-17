@@ -9,7 +9,11 @@ import { KeywordCard } from '@/components/KeywordCard';
 import { ExampleCard } from '@/components/ExampleCard';
 import { ShadowingPlayer } from '@/components/ShadowingPlayer';
 import { QuizCard } from '@/components/QuizCard';
-import { getKeywords, getKeywordsByScene, getScene } from '@/lib/data';
+import {
+  getKeywordsByIndustry,
+  getKeywordsByScene,
+  getScene,
+} from '@/lib/data';
 import { recordLessonComplete } from '@/lib/storage';
 import { warmupVoices } from '@/lib/tts';
 
@@ -25,7 +29,10 @@ export default function LessonPage({ params }: { params: Params }) {
     () => (scene ? getKeywordsByScene(scene.id) : []),
     [scene],
   );
-  const allKeywords = useMemo(() => getKeywords(), []);
+  const industryKeywords = useMemo(
+    () => (scene ? getKeywordsByIndustry(scene.industryId) : []),
+    [scene],
+  );
 
   const [kwIndex, setKwIndex] = useState(0);
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
@@ -68,7 +75,7 @@ export default function LessonPage({ params }: { params: Params }) {
 
   const currentKw = sceneKeywords[kwIndex];
   const example = currentKw.examples[0];
-  const distractors = allKeywords.filter((k) => k.id !== currentKw.id);
+  const distractors = industryKeywords.filter((k) => k.id !== currentKw.id);
 
   const handleNext = () => {
     if (step < 4) {

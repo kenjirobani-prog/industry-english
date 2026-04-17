@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
-import { analyzeText } from '@/lib/analyzer';
+import { analyzeText, type IndustryProfile } from '@/lib/analyzer';
+import { getIndustry, getScenes } from '@/lib/data';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -31,6 +32,24 @@ const REMOVE_SELECTORS = [
   '.cookie',
   '.advert',
 ];
+
+function resolveIndustry(industryId: unknown): IndustryProfile {
+  const id = typeof industryId === 'string' && industryId ? industryId : 'fnb';
+  const industry = getIndustry(id) ?? getIndustry('fnb');
+  if (!industry) throw new Error('No industry data available');
+  const scenes = getScenes(industry.id).map((s) => ({
+    id: s.id,
+    name_en: s.name_en,
+    name_ja: s.name_ja,
+  }));
+  return {
+    id: industry.id,
+    name_en: industry.name_en,
+    name_ja: industry.name_ja,
+    description_ja: industry.description_ja,
+    scenes,
+  };
+}
 
 function cleanUrl(input: unknown): string {
   if (typeof input !== 'string') throw new Error('URL is required');
@@ -123,9 +142,14 @@ function htmlToText(html: string): { title: string; text: string } {
 
 export async function POST(request: Request) {
   let url: string;
+  let industry: IndustryProfile;
   try {
-    const body = (await request.json()) as { url?: unknown };
+    const body = (await request.json()) as {
+      url?: unknown;
+      industryId?: unknown;
+    };
     url = cleanUrl(body?.url);
+    industry = resolveIndustry(body?.industryId);
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Invalid request';
     return NextResponse.json({ error: msg }, { status: 400 });
@@ -141,14 +165,14 @@ export async function POST(request: Request) {
       );
     }
     const sourceLabel = title ? `${title} (${url})` : url;
-    const result = await analyzeText(text, {
-      type: 'url',
-      ref: sourceLabel,
-    });
+    const result = await analyzeText(
+      text,
+      { type: 'url', ref: sourceLabel },
+      industry,
+    );
     return NextResponse.json(result);
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Analysis failed';
-    const status = /not configured/i.test(msg) ? 500 : 500;
-    return NextResponse.json({ error: msg }, { status });
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

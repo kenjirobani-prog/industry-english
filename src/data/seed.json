@@ -8,6 +8,13 @@
       "available": true
     },
     {
+      "id": "digital-marketing",
+      "name_ja": "デジタルマーケティング / デジタル広告",
+      "name_en": "Digital Marketing / Advertising",
+      "description_ja": "DSP/SSP、媒体提案、運用レポート、業界カンファレンスのビジネス英語",
+      "available": true
+    },
+    {
       "id": "tech",
       "name_ja": "テック",
       "name_en": "Technology",
@@ -61,6 +68,38 @@
       "name_en": "Business Dining / Entertaining",
       "description_ja": "海外VIP・パートナーとの食事。ウイスキーや飲料の説明、製造工程の説明。",
       "emoji": "🍽️"
+    },
+    {
+      "id": "campaign-proposal",
+      "industryId": "digital-marketing",
+      "name_ja": "クライアントへのキャンペーン提案",
+      "name_en": "Campaign Proposal to Client",
+      "description_ja": "広告主へのメディアプラン提案、KPI設計、予算配分の説明。",
+      "emoji": "📊"
+    },
+    {
+      "id": "performance-review",
+      "industryId": "digital-marketing",
+      "name_ja": "パフォーマンスレビュー会議",
+      "name_en": "Performance Review Meeting",
+      "description_ja": "キャンペーン結果の振り返り、最適化提案、QBR。",
+      "emoji": "📈"
+    },
+    {
+      "id": "adtech-discussion",
+      "industryId": "digital-marketing",
+      "name_ja": "アドテック / プラットフォームパートナーとの技術議論",
+      "name_en": "AdTech / Platform Partner Discussion",
+      "description_ja": "DSP/SSP連携、タグ実装、SDK統合、プライバシー対応。",
+      "emoji": "⚙️"
+    },
+    {
+      "id": "industry-event",
+      "industryId": "digital-marketing",
+      "name_ja": "業界カンファレンス / イベント",
+      "name_en": "Industry Conference / Event",
+      "description_ja": "DMEXCO、Advertising Week、ad:tech等でのネットワーキング、トレンドディスカッション。",
+      "emoji": "🎟️"
     }
   ],
   "keywords": [
@@ -689,6 +728,770 @@
           "translation": "IWSR香港でのアクティベーションでは1,200件の有望トレード接点を獲得しました。",
           "source": "Event Report",
           "scene": "conference"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-cpm",
+      "industryId": "digital-marketing",
+      "sceneIds": ["campaign-proposal"],
+      "term": "CPM",
+      "meaning_ja": "CPM（Cost Per Mille、1,000インプレッションあたりのコスト）",
+      "meaning_industry": "Cost per thousand impressions — the standard pricing model for awareness-driven display, video, and CTV buys.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Our recommended CPM for premium CTV inventory is $35, in line with the IAB H2 benchmark.",
+          "translation": "プレミアムCTV枠の推奨CPMは35ドルで、IABのH2ベンチマークと同水準です。",
+          "source": "IAB Annual Report 2025",
+          "scene": "campaign-proposal"
+        },
+        {
+          "sentence": "We can lower the blended CPM by shifting 20% of the budget to programmatic open exchange.",
+          "translation": "予算の20%をプログラマティックOXに移すことで、ブレンドCPMを下げられます。",
+          "source": "Media Plan Deck",
+          "scene": "campaign-proposal"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-cpc",
+      "industryId": "digital-marketing",
+      "sceneIds": ["campaign-proposal", "performance-review"],
+      "term": "CPC",
+      "meaning_ja": "CPC（Cost Per Click、1クリックあたりのコスト）",
+      "meaning_industry": "Cost per click — the dominant pricing model for performance search and social campaigns.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Our average CPC on branded search is $0.42, well below the category benchmark.",
+          "translation": "ブランド検索の平均CPCは0.42ドルで、カテゴリーベンチマークを大きく下回っています。",
+          "source": "Google Ads Help Center",
+          "scene": "performance-review"
+        },
+        {
+          "sentence": "We expect the CPC on this audience to spike during Black Friday week.",
+          "translation": "このオーディエンスのCPCはブラックフライデー週に高騰する見込みです。",
+          "source": "Q4 Plan Review",
+          "scene": "campaign-proposal"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-roas",
+      "industryId": "digital-marketing",
+      "sceneIds": ["campaign-proposal", "performance-review"],
+      "term": "ROAS",
+      "meaning_ja": "ROAS（Return on Ad Spend、広告費用対効果）",
+      "meaning_industry": "Return on ad spend — revenue generated per dollar of media investment, the headline KPI for performance campaigns.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Our target ROAS is 4.5x, which we will hit by tightening audience targeting in week 3.",
+          "translation": "目標ROASは4.5倍で、3週目以降にオーディエンスを絞ることで達成見込みです。",
+          "source": "Performance Brief",
+          "scene": "campaign-proposal"
+        },
+        {
+          "sentence": "Last quarter's ROAS came in at 6.2x, beating the plan by 40%.",
+          "translation": "前四半期のROASは6.2倍で、計画を40%上回りました。",
+          "source": "QBR Deck",
+          "scene": "performance-review"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-media-mix",
+      "industryId": "digital-marketing",
+      "sceneIds": ["campaign-proposal"],
+      "term": "media mix",
+      "meaning_ja": "メディアミックス（媒体構成）",
+      "meaning_industry": "The combination of channels (search, social, programmatic, CTV, OOH, etc.) and their respective budget allocations within a campaign.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "Our recommended media mix is 40% paid social, 30% programmatic, 20% search, and 10% CTV.",
+          "translation": "推奨メディアミックスはペイドソーシャル40%、プログラマティック30%、検索20%、CTV10%です。",
+          "source": "Q1 Media Plan",
+          "scene": "campaign-proposal"
+        },
+        {
+          "sentence": "MMM analysis suggests that the current media mix is over-indexed on search and under-invested in upper-funnel channels.",
+          "translation": "MMM分析によると、現在のメディアミックスは検索に偏り、アッパーファネルへの投資が不足しています。",
+          "source": "eMarketer 2025",
+          "scene": "campaign-proposal"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-reach-frequency",
+      "industryId": "digital-marketing",
+      "sceneIds": ["campaign-proposal"],
+      "term": "reach and frequency",
+      "meaning_ja": "リーチ＆フリークエンシー（到達人数と接触回数）",
+      "meaning_industry": "Reach = unique audience exposed; frequency = average number of impressions per person. Foundational planning levers for awareness campaigns.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "We will plan to a 60% reach with an average frequency of 4 over the four-week flight.",
+          "translation": "4週間のフライトでリーチ60%、平均フリークエンシー4回を目標にプランニングします。",
+          "source": "Reach Plan",
+          "scene": "campaign-proposal"
+        },
+        {
+          "sentence": "Frequency capping is set at 3 per week to avoid wear-out.",
+          "translation": "ウェアアウトを避けるため、フリークエンシーキャップは週3回に設定しています。",
+          "source": "Trafficking Notes",
+          "scene": "campaign-proposal"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-brand-lift",
+      "industryId": "digital-marketing",
+      "sceneIds": ["campaign-proposal", "performance-review"],
+      "term": "brand lift",
+      "meaning_ja": "ブランドリフト（ブランド認知・好意度向上の測定指標）",
+      "meaning_industry": "The measured uplift in brand awareness, ad recall, consideration, or favorability driven by a campaign — typically measured via control/exposed surveys.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "The YouTube brand lift study showed a 12-point increase in unaided ad recall.",
+          "translation": "YouTubeのブランドリフト調査では、純粋想起広告認知が12ポイント上昇しました。",
+          "source": "Google Brand Lift Study",
+          "scene": "performance-review"
+        },
+        {
+          "sentence": "We will run a brand lift study to demonstrate value beyond click metrics.",
+          "translation": "クリック指標以外の価値を示すため、ブランドリフト調査を実施します。",
+          "source": "Client Proposal",
+          "scene": "campaign-proposal"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-sov",
+      "industryId": "digital-marketing",
+      "sceneIds": ["campaign-proposal"],
+      "term": "share of voice",
+      "meaning_ja": "シェア・オブ・ボイス（SOV、業界内露出シェア）",
+      "meaning_industry": "The percentage of total category advertising voice (impressions or spend) owned by a brand — used to benchmark competitive presence.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "We currently hold 28% share of voice in the category, trailing the leader by 9 points.",
+          "translation": "カテゴリー内SOVは現在28%で、首位に9ポイント差をつけられています。",
+          "source": "Competitive Tracker",
+          "scene": "campaign-proposal"
+        },
+        {
+          "sentence": "To grow share of market, we need to first grow share of voice ahead of the launch.",
+          "translation": "シェア拡大のためには、ローンチに先駆けてSOVを高めることが必要です。",
+          "source": "Strategy Memo",
+          "scene": "campaign-proposal"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-impression",
+      "industryId": "digital-marketing",
+      "sceneIds": ["campaign-proposal", "performance-review"],
+      "term": "impression",
+      "meaning_ja": "インプレッション（広告が表示された回数）",
+      "meaning_industry": "A single instance of an ad being served (or, more strictly, viewable) to a user. The base unit of digital advertising delivery.",
+      "meaning_general": "In everyday English, 'impression' means a perception or feeling. In digital ads it strictly means an ad serve / view.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "We delivered 42 million impressions against the target audience last month.",
+          "translation": "先月、ターゲットオーディエンスに対して4,200万インプレッションを配信しました。",
+          "source": "Monthly Performance Report",
+          "scene": "performance-review"
+        },
+        {
+          "sentence": "MRC-compliant viewable impressions accounted for 78% of total impressions.",
+          "translation": "MRC準拠のビューアブルインプレッションは、全インプレッションの78%を占めました。",
+          "source": "MRC Standards",
+          "scene": "performance-review"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-creative",
+      "industryId": "digital-marketing",
+      "sceneIds": ["campaign-proposal", "adtech-discussion"],
+      "term": "creative",
+      "meaning_ja": "クリエイティブ（広告素材：バナー・動画・コピー等）",
+      "meaning_industry": "The actual ad asset — banner image, video, copy, HTML5 unit — delivered to consumers. Used as a noun in ad ops contexts.",
+      "meaning_general": "In general English, 'creative' is an adjective meaning imaginative. In digital ads it is a noun meaning the ad asset itself.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "We need three creative variants per audience segment for the A/B test.",
+          "translation": "A/Bテストのために、オーディエンスセグメントごとに3種類のクリエイティブが必要です。",
+          "source": "Creative Brief",
+          "scene": "campaign-proposal"
+        },
+        {
+          "sentence": "Dynamic creative optimization will assemble the creative on the fly per impression.",
+          "translation": "ダイナミック・クリエイティブ・オプティマイゼーションは、インプレッション単位でクリエイティブを動的に組み立てます。",
+          "source": "AdExchanger",
+          "scene": "adtech-discussion"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-ctr",
+      "industryId": "digital-marketing",
+      "sceneIds": ["performance-review"],
+      "term": "CTR",
+      "meaning_ja": "CTR（Click Through Rate、クリック率）",
+      "meaning_industry": "Click-through rate — clicks divided by impressions. The most-watched engagement metric, though increasingly downplayed in favor of post-click signals.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Our CTR jumped from 0.8% to 1.4% after the creative refresh.",
+          "translation": "クリエイティブをリフレッシュした結果、CTRは0.8%から1.4%に跳ね上がりました。",
+          "source": "Weekly Performance Report",
+          "scene": "performance-review"
+        },
+        {
+          "sentence": "A high CTR doesn't always mean high quality traffic — we should also look at bounce rate.",
+          "translation": "CTRが高くてもトラフィックの質が高いとは限らないため、直帰率も併せて確認すべきです。",
+          "source": "Optimization Memo",
+          "scene": "performance-review"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-conversion-rate",
+      "industryId": "digital-marketing",
+      "sceneIds": ["performance-review"],
+      "term": "conversion rate",
+      "meaning_ja": "コンバージョン率（CVR、目標達成率）",
+      "meaning_industry": "The percentage of users who complete a defined goal (purchase, signup, lead form) after clicking or viewing an ad.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "The landing page redesign lifted conversion rate from 2.1% to 3.4%.",
+          "translation": "ランディングページのリデザインで、コンバージョン率は2.1%から3.4%に上昇しました。",
+          "source": "QBR Deck",
+          "scene": "performance-review"
+        },
+        {
+          "sentence": "Mobile conversion rate is still half of desktop — we have a checkout UX problem.",
+          "translation": "モバイルのコンバージョン率は依然デスクトップの半分にとどまり、チェックアウトUXに課題があります。",
+          "source": "Optimization Review",
+          "scene": "performance-review"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-attribution-model",
+      "industryId": "digital-marketing",
+      "sceneIds": ["performance-review"],
+      "term": "attribution model",
+      "meaning_ja": "アトリビューションモデル（コンバージョン貢献度の配分ルール）",
+      "meaning_industry": "The methodology that assigns conversion credit across touchpoints — last-click, first-click, linear, time-decay, data-driven, MTA, MMM.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "We will move from last-click to a data-driven attribution model in Q2.",
+          "translation": "Q2に、ラストクリックからデータドリブン・アトリビューションモデルに移行します。",
+          "source": "Measurement Roadmap",
+          "scene": "performance-review"
+        },
+        {
+          "sentence": "Different attribution models will tell very different stories about top-of-funnel channels.",
+          "translation": "アトリビューションモデルによって、アッパーファネルの評価結果は大きく変わります。",
+          "source": "Digiday",
+          "scene": "performance-review"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-incrementality",
+      "industryId": "digital-marketing",
+      "sceneIds": ["performance-review"],
+      "term": "incrementality",
+      "meaning_ja": "インクリメンタリティ（広告の純粋な追加効果）",
+      "meaning_industry": "The true causal lift in conversions driven by advertising, isolated from organic baseline behavior — measured via geo holdouts, ghost ads, or PSA controls.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "The incrementality test showed that paid search drove only 35% incremental conversions.",
+          "translation": "インクリメンタリティ・テストの結果、ペイドサーチによる純増コンバージョンは35%にとどまりました。",
+          "source": "Measurement Lab Report",
+          "scene": "performance-review"
+        },
+        {
+          "sentence": "We need to design the incrementality study with a clean control group across geos.",
+          "translation": "地域別にクリーンな対照群を設定して、インクリメンタリティ調査を設計する必要があります。",
+          "source": "Analytics Plan",
+          "scene": "performance-review"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-view-through",
+      "industryId": "digital-marketing",
+      "sceneIds": ["performance-review"],
+      "term": "view-through",
+      "meaning_ja": "ビュースルー（広告を見た後にクリックなしで発生したコンバージョン）",
+      "meaning_industry": "A conversion attributed to a user who saw (but did not click) an ad within the lookback window. Often abbreviated VTC.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "View-through conversions accounted for 60% of total reported conversions in display.",
+          "translation": "ディスプレイ広告のレポート上、ビュースルー・コンバージョンが全体の60%を占めました。",
+          "source": "DCM Reports",
+          "scene": "performance-review"
+        },
+        {
+          "sentence": "Be cautious when valuing view-through credit at the same weight as click conversions.",
+          "translation": "ビュースルーのクレジットを、クリック・コンバージョンと同等に重み付けする際は注意が必要です。",
+          "source": "MMA Best Practice Guide",
+          "scene": "performance-review"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-cpa",
+      "industryId": "digital-marketing",
+      "sceneIds": ["performance-review", "campaign-proposal"],
+      "term": "cost per acquisition",
+      "meaning_ja": "獲得単価（CPA、Cost Per Acquisition）",
+      "meaning_industry": "The total media cost divided by the number of conversions — the headline efficiency KPI for performance buyers.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Our blended cost per acquisition is $42, down 18% quarter over quarter.",
+          "translation": "ブレンドのCPAは42ドルで、前四半期比18%改善しました。",
+          "source": "QBR Deck",
+          "scene": "performance-review"
+        },
+        {
+          "sentence": "We can guarantee a target CPA of $50 if we are given full bid management control.",
+          "translation": "入札管理を完全にお任せいただければ、目標CPA50ドルを担保できます。",
+          "source": "Performance Proposal",
+          "scene": "campaign-proposal"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-ab-test",
+      "industryId": "digital-marketing",
+      "sceneIds": ["performance-review"],
+      "term": "A/B test",
+      "meaning_ja": "A/Bテスト（2案を並走比較する効果検証）",
+      "meaning_industry": "A controlled experiment where two creative or audience variants run simultaneously to identify the higher-performing version with statistical confidence.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "The A/B test on headline copy reached 95% confidence after 11 days.",
+          "translation": "見出しコピーのA/Bテストは、11日後に信頼度95%に到達しました。",
+          "source": "Test Readout",
+          "scene": "performance-review"
+        },
+        {
+          "sentence": "We always set A/B tests with a single variable; multivariate is for later phases.",
+          "translation": "A/Bテストは常に1変数で実施し、多変量検証は次フェーズに回します。",
+          "source": "Testing Playbook",
+          "scene": "performance-review"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-conversion",
+      "industryId": "digital-marketing",
+      "sceneIds": ["performance-review"],
+      "term": "conversion",
+      "meaning_ja": "コンバージョン（広告経由で完了した目標アクション）",
+      "meaning_industry": "Any user action defined as a campaign goal — purchase, lead submission, app install, signup. The fundamental performance currency of digital advertising.",
+      "meaning_general": "In general English, 'conversion' often means a change in beliefs or unit conversion. In digital ads it means a goal action attributed to media.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "The campaign drove 18,400 conversions at an average value of $63 each.",
+          "translation": "本キャンペーンは18,400件のコンバージョンを獲得し、平均価値は63ドルでした。",
+          "source": "GA4 Report",
+          "scene": "performance-review"
+        },
+        {
+          "sentence": "Make sure the conversion definition matches what the client considers a sale.",
+          "translation": "コンバージョン定義は、クライアントが売上と見なす基準と一致させる必要があります。",
+          "source": "Tagging Spec",
+          "scene": "performance-review"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-programmatic",
+      "industryId": "digital-marketing",
+      "sceneIds": ["adtech-discussion", "industry-event"],
+      "term": "programmatic",
+      "meaning_ja": "プログラマティック（自動入札による広告取引）",
+      "meaning_industry": "Automated buying and selling of digital ad inventory through real-time bidding (RTB), private marketplaces (PMP), and programmatic guaranteed deals.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Programmatic now accounts for 90% of all digital display spending in the US.",
+          "translation": "プログラマティックは、現在米国デジタルディスプレイ広告費の90%を占めています。",
+          "source": "eMarketer 2025",
+          "scene": "industry-event"
+        },
+        {
+          "sentence": "We can route this deal through programmatic guaranteed for premium inventory at fixed CPM.",
+          "translation": "プレミアム在庫を固定CPMで確保するため、プログラマティック・ギャランティードでこの取引を組成できます。",
+          "source": "DSP Console",
+          "scene": "adtech-discussion"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-header-bidding",
+      "industryId": "digital-marketing",
+      "sceneIds": ["adtech-discussion"],
+      "term": "header bidding",
+      "meaning_ja": "ヘッダービディング（複数SSPへの同時入札を可能にする技術）",
+      "meaning_industry": "A publisher-side technique that solicits bids from multiple ad exchanges simultaneously before calling the ad server, increasing yield versus the legacy waterfall.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "Adding header bidding lifted publisher CPMs by an average of 30% across our portfolio.",
+          "translation": "ヘッダービディングを導入したことで、媒体側CPMは平均30%改善しました。",
+          "source": "Prebid.js Case Study",
+          "scene": "adtech-discussion"
+        },
+        {
+          "sentence": "Server-side header bidding reduces page latency compared to client-side wrappers.",
+          "translation": "サーバーサイドのヘッダービディングは、クライアントサイドのラッパーよりページ遅延を抑えられます。",
+          "source": "AdExchanger",
+          "scene": "adtech-discussion"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-first-party-data",
+      "industryId": "digital-marketing",
+      "sceneIds": ["adtech-discussion", "industry-event"],
+      "term": "first-party data",
+      "meaning_ja": "ファーストパーティデータ（自社が直接取得した顧客データ）",
+      "meaning_industry": "Customer data collected directly by a brand from its own properties (website, app, CRM, loyalty program). Increasingly the foundation of post-cookie targeting.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Our first-party data strategy now centers on the loyalty program and authenticated traffic.",
+          "translation": "ファーストパーティデータ戦略の中心は、現在ロイヤリティプログラムと認証済みトラフィックです。",
+          "source": "Data Strategy Doc",
+          "scene": "adtech-discussion"
+        },
+        {
+          "sentence": "Brands with strong first-party data sets are best positioned for the cookieless world.",
+          "translation": "強固なファーストパーティデータを持つブランドは、Cookieless時代に最も有利です。",
+          "source": "DMEXCO Panel",
+          "scene": "industry-event"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-clean-room",
+      "industryId": "digital-marketing",
+      "sceneIds": ["adtech-discussion", "industry-event"],
+      "term": "clean room",
+      "meaning_ja": "クリーンルーム（個人を特定できない状態でデータを照合する環境）",
+      "meaning_industry": "A privacy-safe environment (e.g., Google Ads Data Hub, AWS Clean Rooms, LiveRamp) where two parties match data without exposing PII.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "We will use a clean room to match our CRM with the publisher's audience for measurement.",
+          "translation": "計測のため、当社CRMと媒体オーディエンスをクリーンルームで照合します。",
+          "source": "Measurement Plan",
+          "scene": "adtech-discussion"
+        },
+        {
+          "sentence": "Clean rooms have moved from niche to mainstream as third-party cookies deprecate.",
+          "translation": "サードパーティCookieの非推奨化に伴い、クリーンルームはニッチから主流へと変化しました。",
+          "source": "IAB Annual Report 2025",
+          "scene": "industry-event"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-consent-management",
+      "industryId": "digital-marketing",
+      "sceneIds": ["adtech-discussion"],
+      "term": "consent management",
+      "meaning_ja": "同意管理（ユーザー同意取得と運用の仕組み）",
+      "meaning_industry": "The system (CMP) and processes for capturing, storing, and signaling user consent for tracking and ad personalization, often per the IAB TCF and regional regulations.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "Our consent management platform now signals TCF v2.2 strings to all downstream partners.",
+          "translation": "当社の同意管理プラットフォームは、現在TCF v2.2の同意文字列を全下流パートナーに送信しています。",
+          "source": "Privacy Tech Spec",
+          "scene": "adtech-discussion"
+        },
+        {
+          "sentence": "Without proper consent management, programmatic delivery in the EU will collapse.",
+          "translation": "適切な同意管理が欠ければ、EUでのプログラマティック配信は成立しなくなります。",
+          "source": "GDPR Compliance Memo",
+          "scene": "adtech-discussion"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-s2s",
+      "industryId": "digital-marketing",
+      "sceneIds": ["adtech-discussion"],
+      "term": "server-to-server",
+      "meaning_ja": "サーバー・トゥ・サーバー（S2S、サーバー間連携）",
+      "meaning_industry": "Direct backend integration between two systems (e.g., advertiser server and platform conversion API) bypassing the browser. Often abbreviated S2S.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "We're moving conversion tracking to a server-to-server integration via the Conversions API.",
+          "translation": "コンバージョン計測は、Conversions API経由のサーバー・トゥ・サーバー連携に移行中です。",
+          "source": "Meta Business Help",
+          "scene": "adtech-discussion"
+        },
+        {
+          "sentence": "Server-to-server delivery removes browser dependencies and is more resilient to ad blockers.",
+          "translation": "S2S配信はブラウザ依存を排除でき、広告ブロッカーへの耐性も高くなります。",
+          "source": "Engineering Doc",
+          "scene": "adtech-discussion"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-bid-request",
+      "industryId": "digital-marketing",
+      "sceneIds": ["adtech-discussion"],
+      "term": "bid request",
+      "meaning_ja": "ビッドリクエスト（SSPからDSPへ送られる入札依頼）",
+      "meaning_industry": "The OpenRTB payload sent by an SSP/exchange to DSPs in real time, describing an impression opportunity and inviting bids — typically resolved in under 100ms.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "Our DSP processes 12 million bid requests per second at peak.",
+          "translation": "当社DSPはピーク時に毎秒1,200万件のビッドリクエストを処理しています。",
+          "source": "The Trade Desk Q3 Earnings Call",
+          "scene": "adtech-discussion"
+        },
+        {
+          "sentence": "Each bid request now must include a TCF consent string for EEA traffic.",
+          "translation": "EEA向けトラフィックでは、各ビッドリクエストにTCF同意文字列を含める必要があります。",
+          "source": "OpenRTB 2.6 Spec",
+          "scene": "adtech-discussion"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-pixel",
+      "industryId": "digital-marketing",
+      "sceneIds": ["adtech-discussion"],
+      "term": "pixel",
+      "meaning_ja": "ピクセル（広告計測用のトラッキングコード）",
+      "meaning_industry": "A snippet of code (often a 1×1 transparent image or JS tag) placed on a website to capture ad-related events such as page views, conversions, and remarketing audiences.",
+      "meaning_general": "In general English, a pixel is the smallest unit of a digital image. In digital ads, 'the pixel' refers to a tracking tag.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Make sure the Meta pixel and the Google tag both fire on the order confirmation page.",
+          "translation": "Metaピクセルと Googleタグの両方が、注文確認ページで発火するよう確認してください。",
+          "source": "Tagging QA Checklist",
+          "scene": "adtech-discussion"
+        },
+        {
+          "sentence": "The pixel was misconfigured, so half of the conversions were missing for two weeks.",
+          "translation": "ピクセルの設定ミスにより、2週間にわたりコンバージョンの半数が欠損しました。",
+          "source": "Incident Postmortem",
+          "scene": "adtech-discussion"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-inventory",
+      "industryId": "digital-marketing",
+      "sceneIds": ["adtech-discussion", "campaign-proposal"],
+      "term": "inventory",
+      "meaning_ja": "インベントリー（広告枠在庫）",
+      "meaning_industry": "Available ad space across publisher properties — categorized by format, size, viewability, and quality (premium vs. open exchange).",
+      "meaning_general": "In general business, 'inventory' means physical stock. In digital ads it means saleable ad slots.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Premium inventory on top-tier news sites is sold via PMP at higher CPMs.",
+          "translation": "トップティアのニュースサイトのプレミアム在庫は、PMP経由で高CPMで販売されます。",
+          "source": "AdExchanger",
+          "scene": "adtech-discussion"
+        },
+        {
+          "sentence": "We secured exclusive Super Bowl streaming inventory through a programmatic guaranteed deal.",
+          "translation": "プログラマティック・ギャランティード契約で、スーパーボウル・ストリーミングの独占在庫を確保しました。",
+          "source": "Deal Memo",
+          "scene": "campaign-proposal"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-retail-media",
+      "industryId": "digital-marketing",
+      "sceneIds": ["industry-event"],
+      "term": "retail media",
+      "meaning_ja": "リテールメディア（小売事業者の広告メディア化）",
+      "meaning_industry": "Advertising on retailer-owned properties (Amazon, Walmart Connect, Target Roundel) using the retailer's first-party purchase data — the fastest-growing channel in digital.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Retail media will surpass linear TV in US ad spend by 2027 according to GroupM.",
+          "translation": "GroupMの予測によれば、リテールメディアは2027年までに米国でリニアTV広告費を上回ります。",
+          "source": "GroupM Forecast 2025",
+          "scene": "industry-event"
+        },
+        {
+          "sentence": "Retail media networks offer closed-loop measurement that rivals walled gardens.",
+          "translation": "リテールメディアネットワークは、ウォールドガーデンに匹敵するクローズドループの計測を提供します。",
+          "source": "DMEXCO Keynote",
+          "scene": "industry-event"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-ctv",
+      "industryId": "digital-marketing",
+      "sceneIds": ["industry-event"],
+      "term": "CTV",
+      "meaning_ja": "CTV（Connected TV、コネクテッドTV）",
+      "meaning_industry": "Connected TV — internet-delivered television viewed on smart TVs, streaming sticks, and game consoles. The fastest-growing premium video channel in digital.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "CTV ad spend will reach $42 billion in the US in 2026, per eMarketer.",
+          "translation": "eMarketerによれば、米国のCTV広告費は2026年に420億ドルに達する見込みです。",
+          "source": "eMarketer 2025",
+          "scene": "industry-event"
+        },
+        {
+          "sentence": "CTV measurement remains fragmented across walled gardens — a hot topic at Advertising Week.",
+          "translation": "CTVの計測はウォールドガーデン間で分断されており、Advertising Weekでも注目テーマでした。",
+          "source": "Advertising Week NYC",
+          "scene": "industry-event"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-attention-economy",
+      "industryId": "digital-marketing",
+      "sceneIds": ["industry-event"],
+      "term": "attention economy",
+      "meaning_ja": "アテンション・エコノミー（注目度を媒介通貨とする経済）",
+      "meaning_industry": "An emerging measurement framework that values media on actual user attention (eye tracking, view time, panel-derived attention scores) rather than impressions alone.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "The attention economy debate dominated the IAB's measurement track this year.",
+          "translation": "今年のIAB計測トラックでは、アテンション・エコノミー論争が中心でした。",
+          "source": "IAB Annual Leadership Meeting",
+          "scene": "industry-event"
+        },
+        {
+          "sentence": "Attention metrics correlate more strongly with brand outcomes than viewability alone.",
+          "translation": "アテンション指標は、ビューアビリティ単独よりブランド指標との相関が強いとされています。",
+          "source": "Adelaide Research",
+          "scene": "industry-event"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-cookieless",
+      "industryId": "digital-marketing",
+      "sceneIds": ["industry-event"],
+      "term": "cookieless",
+      "meaning_ja": "クッキーレス（サードパーティCookieに依存しない状態）",
+      "meaning_industry": "A targeting and measurement environment that does not rely on third-party cookies — driven by browser privacy changes, regulation, and ATT-style platform restrictions.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Brands need a cookieless plan that combines first-party data, contextual, and clean rooms.",
+          "translation": "ブランドは、ファーストパーティデータ・コンテクスチュアル・クリーンルームを組み合わせたクッキーレス対応戦略が必要です。",
+          "source": "Digiday",
+          "scene": "industry-event"
+        },
+        {
+          "sentence": "Even after Chrome's pivot, the cookieless trajectory is irreversible.",
+          "translation": "Chromeの方針転換後も、クッキーレス化の流れは不可逆です。",
+          "source": "DMEXCO Panel",
+          "scene": "industry-event"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-walled-garden",
+      "industryId": "digital-marketing",
+      "sceneIds": ["industry-event"],
+      "term": "walled garden",
+      "meaning_ja": "ウォールドガーデン（自社プラットフォーム内で完結する閉鎖環境）",
+      "meaning_industry": "A closed advertising ecosystem (e.g., Google, Meta, Amazon, TikTok) where data, inventory, and measurement do not flow out to third parties.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Independent measurement of the walled gardens remains the industry's biggest open question.",
+          "translation": "ウォールドガーデンの第三者計測は、業界最大の未解決テーマです。",
+          "source": "ANA Cross-Media Measurement",
+          "scene": "industry-event"
+        },
+        {
+          "sentence": "Walled gardens captured 65% of total US digital ad spend last year.",
+          "translation": "昨年、ウォールドガーデンは米国デジタル広告費全体の65%を占めました。",
+          "source": "eMarketer 2025",
+          "scene": "industry-event"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-commerce-media",
+      "industryId": "digital-marketing",
+      "sceneIds": ["industry-event"],
+      "term": "commerce media",
+      "meaning_ja": "コマースメディア（購買行動を起点とした広告メディア）",
+      "meaning_industry": "An expanded category beyond retail media, encompassing any advertising activated on commerce data — including marketplaces, fintechs, and travel platforms.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "Commerce media is a broader frame than retail media — it includes any commerce-data-fueled channel.",
+          "translation": "コマースメディアはリテールメディアよりも広く、購買データを活用するあらゆるチャネルを含みます。",
+          "source": "Criteo Commerce Media Report",
+          "scene": "industry-event"
+        },
+        {
+          "sentence": "Banks and ride-sharing platforms are entering the commerce media space with their transaction data.",
+          "translation": "銀行や配車プラットフォームも、自社の取引データでコマースメディア市場に参入しています。",
+          "source": "AdExchanger",
+          "scene": "industry-event"
+        }
+      ]
+    },
+    {
+      "id": "kw-dm-shoppable-ads",
+      "industryId": "digital-marketing",
+      "sceneIds": ["industry-event"],
+      "term": "shoppable ads",
+      "meaning_ja": "ショッパブル広告（広告内で直接購入可能な形式）",
+      "meaning_industry": "Ad formats that allow users to browse and purchase products without leaving the ad surface — common in social commerce, CTV, and shoppable video.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "Shoppable ads on CTV are unlocking a new performance use case for streaming.",
+          "translation": "CTVのショッパブル広告は、ストリーミングにおける新しいパフォーマンス活用法を切り拓いています。",
+          "source": "DMEXCO 2025",
+          "scene": "industry-event"
+        },
+        {
+          "sentence": "TikTok's shoppable ads format saw a 3x lift in conversion intent for beauty brands.",
+          "translation": "TikTokのショッパブル広告フォーマットでは、ビューティブランドの購買意向が3倍に上昇しました。",
+          "source": "TikTok for Business",
+          "scene": "industry-event"
         }
       ]
     }
