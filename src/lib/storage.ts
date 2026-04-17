@@ -1,7 +1,13 @@
 // localStorage wrapper. SSR-safe.
 // Abstracted so we can swap to Supabase later without changing call sites.
 
-import type { LessonProgress, QuizResult, UserPreferences } from '@/types';
+import type {
+  ExtractedKeyword,
+  LessonProgress,
+  QuizResult,
+  UserKeyword,
+  UserPreferences,
+} from '@/types';
 
 const KEYS = {
   prefs: 'ie:preferences',
@@ -9,6 +15,7 @@ const KEYS = {
   quizResults: 'ie:quiz-results',
   lessonProgress: 'ie:lesson-progress',
   shadowingCounts: 'ie:shadowing-counts',
+  userKeywords: 'ie:user-keywords',
 } as const;
 
 function isAvailable(): boolean {
@@ -119,4 +126,45 @@ export function incrementShadowingCount(keywordId: string): number {
   counts[keywordId] = next;
   write(KEYS.shadowingCounts, counts);
   return next;
+}
+
+// ---------- User-extracted keywords (from URL/file analysis) ----------
+
+export function getUserKeywords(): UserKeyword[] {
+  return read<UserKeyword[]>(KEYS.userKeywords, []);
+}
+
+export function addUserKeywords(
+  extracted: ExtractedKeyword[],
+  source: { type: 'url' | 'file'; ref: string },
+): UserKeyword[] {
+  const existing = getUserKeywords();
+  const existingTerms = new Set(
+    existing.map((k) => k.term.toLowerCase()),
+  );
+  const now = new Date().toISOString();
+  const newOnes: UserKeyword[] = extracted
+    .filter((k) => !existingTerms.has(k.term.toLowerCase()))
+    .map((k, i) => {
+      const sceneIds = Array.from(
+        new Set(k.examples.map((e) => e.scene).filter(Boolean)),
+      );
+      return {
+        id: `user-${Date.now()}-${i}-${k.term.replace(/\W+/g, '-').toLowerCase()}`,
+        industryId: 'fnb',
+        sceneIds: sceneIds.length > 0 ? sceneIds : ['brand-strategy'],
+        term: k.term,
+        meaning_ja: k.meaning_ja,
+        meaning_industry: k.meaning_industry,
+        meaning_general: k.meaning_general,
+        frequency: k.frequency,
+        examples: k.examples,
+        sourceType: source.type,
+        sourceRef: source.ref,
+        extractedAt: now,
+      };
+    });
+  const next = [...existing, ...newOnes];
+  write(KEYS.userKeywords, next);
+  return newOnes;
 }

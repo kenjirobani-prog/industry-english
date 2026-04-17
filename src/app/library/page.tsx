@@ -4,21 +4,33 @@ import { useEffect, useMemo, useState } from 'react';
 import { SiteHeader } from '@/components/SiteHeader';
 import { KeywordCard } from '@/components/KeywordCard';
 import { getKeywords, getScenes } from '@/lib/data';
-import { getBookmarks } from '@/lib/storage';
+import { getBookmarks, getUserKeywords } from '@/lib/storage';
+import type { Keyword, UserKeyword } from '@/types';
 
 export default function LibraryPage() {
   const [sceneFilter, setSceneFilter] = useState<string>('all');
   const [bookmarksOnly, setBookmarksOnly] = useState(false);
+  const [userOnly, setUserOnly] = useState(false);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
+  const [userKeywords, setUserKeywords] = useState<UserKeyword[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
 
   useEffect(() => {
     setBookmarks(getBookmarks());
+    setUserKeywords(getUserKeywords());
   }, [openId]);
 
   const scenes = useMemo(() => getScenes('fnb'), []);
+  const userIdSet = useMemo(
+    () => new Set(userKeywords.map((k) => k.id)),
+    [userKeywords],
+  );
+  const allKeywords = useMemo<Keyword[]>(
+    () => [...getKeywords(), ...userKeywords],
+    [userKeywords],
+  );
   const keywords = useMemo(() => {
-    let list = getKeywords();
+    let list = allKeywords;
     if (sceneFilter !== 'all') {
       list = list.filter((k) => k.sceneIds.includes(sceneFilter));
     }
@@ -26,8 +38,11 @@ export default function LibraryPage() {
       const set = new Set(bookmarks);
       list = list.filter((k) => set.has(k.id));
     }
+    if (userOnly) {
+      list = list.filter((k) => userIdSet.has(k.id));
+    }
     return list;
-  }, [sceneFilter, bookmarksOnly, bookmarks]);
+  }, [allKeywords, sceneFilter, bookmarksOnly, userOnly, bookmarks, userIdSet]);
 
   return (
     <>
@@ -73,8 +88,19 @@ export default function LibraryPage() {
             ))}
             <button
               type="button"
-              onClick={() => setBookmarksOnly((v) => !v)}
+              onClick={() => setUserOnly((v) => !v)}
               className={`text-xs rounded-full px-3 py-1.5 border transition ml-auto ${
+                userOnly
+                  ? 'bg-amber-500/20 border-amber-400 text-amber-100'
+                  : 'bg-surface-1 border-border-soft text-amber-100/60 hover:border-amber-500/40'
+              }`}
+            >
+              📥 抽出済みのみ
+            </button>
+            <button
+              type="button"
+              onClick={() => setBookmarksOnly((v) => !v)}
+              className={`text-xs rounded-full px-3 py-1.5 border transition ${
                 bookmarksOnly
                   ? 'bg-gold/20 border-gold text-amber-100'
                   : 'bg-surface-1 border-border-soft text-amber-100/60 hover:border-gold/40'
@@ -93,6 +119,7 @@ export default function LibraryPage() {
             <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {keywords.map((kw) => {
                 const isBookmarked = bookmarks.includes(kw.id);
+                const isUserExtracted = userIdSet.has(kw.id);
                 return (
                   <li key={kw.id}>
                     <button
@@ -104,9 +131,19 @@ export default function LibraryPage() {
                         <div className="font-display text-base text-amber-100 leading-tight">
                           {kw.term}
                         </div>
-                        {isBookmarked && (
-                          <span className="text-gold text-sm">★</span>
-                        )}
+                        <div className="flex items-center gap-1 shrink-0">
+                          {isUserExtracted && (
+                            <span
+                              title="あなたが抽出したキーワード"
+                              className="text-[9px] tracking-widest text-emerald-300 border border-emerald-500/40 rounded-full px-1.5 py-0.5"
+                            >
+                              抽出
+                            </span>
+                          )}
+                          {isBookmarked && (
+                            <span className="text-gold text-sm">★</span>
+                          )}
+                        </div>
                       </div>
                       <div className="text-[11px] text-amber-100/60 mb-2">
                         {kw.meaning_ja}
@@ -144,7 +181,7 @@ export default function LibraryPage() {
               onClick={(e) => e.stopPropagation()}
             >
               {(() => {
-                const kw = getKeywords().find((k) => k.id === openId);
+                const kw = allKeywords.find((k) => k.id === openId);
                 if (!kw) return null;
                 return (
                   <div className="space-y-3">

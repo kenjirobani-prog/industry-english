@@ -62,3 +62,38 @@ export type LessonProgress = {
   completedAt: string;
   keywordIds: string[];
 };
+
+// ---------- Analysis (URL / file → Claude) ----------
+
+export type ExtractedKeyword = {
+  term: string;
+  meaning_ja: string;
+  meaning_industry: string;
+  meaning_general?: string;
+  frequency: 1 | 2 | 3 | 4 | 5;
+  examples: Example[];
+};
+
+export type AnalysisQuiz = {
+  question: string;
+  choices: string[];
+  correctIndex: number;
+  explanation: string;
+};
+
+export type AnalysisSource = {
+  type: 'url' | 'file';
+  ref: string; // URL or filename
+};
+
+export type AnalysisResult = {
+  source: AnalysisSource;
+  keywords: ExtractedKeyword[];
+  quizzes: AnalysisQuiz[];
+};
+
+export type UserKeyword = Keyword & {
+  sourceType: 'url' | 'file';
+  sourceRef: string;
+  extractedAt: string;
+};
