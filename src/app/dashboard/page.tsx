@@ -56,18 +56,27 @@ export default function DashboardPage() {
       <SiteHeader />
       <main className="flex-1">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
-          <div className="mb-8">
+          <div className="mb-6">
+            <Link
+              href="/settings"
+              className="inline-flex items-center gap-2 text-[11px] text-amber-100/60 hover:text-amber-200 transition mb-3 group"
+            >
+              <span aria-hidden>⚙</span>
+              <span>
+                {industryName ?? '—'}
+                <span className="mx-1.5 text-amber-100/30">·</span>
+                {activeSceneIds.length} シーン選択中
+              </span>
+              <span className="text-amber-100/40 group-hover:text-amber-200 transition">
+                変更 ›
+              </span>
+            </Link>
             <div className="font-display tracking-[0.3em] text-[11px] text-gold uppercase mb-1">
               Today
             </div>
             <h1 className="font-display text-3xl text-amber-100">
               おかえりなさい
             </h1>
-            {industryName && (
-              <p className="text-sm text-amber-100/60 mt-1">
-                業界: <span className="text-amber-200">{industryName}</span>
-              </p>
-            )}
           </div>
 
           {/* Stats */}
