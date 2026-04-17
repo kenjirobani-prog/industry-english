@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, type DragEvent } from 'react';
+import { AlertCircle, FileText, RotateCcw } from 'lucide-react';
 import type { AnalysisResult } from '@/types';
 import { getPreferences } from '@/lib/storage';
 
@@ -91,12 +92,13 @@ export function FileUpload({ onResult }: Props) {
         onDrop={onDrop}
         onDragOver={onDragOver}
         onDragLeave={() => setDragOver(false)}
-        className={`block rounded-xl border border-dashed cursor-pointer p-12 text-center transition-colors ${dropClass} ${
+        className={`flex flex-col items-center gap-3 rounded-xl border border-dashed cursor-pointer p-12 text-center transition-colors ${dropClass} ${
           status === 'parsing' ? 'pointer-events-none opacity-60' : ''
         }`}
       >
-        <div className="t-subtitle text-apple-fg mb-2">資料をアップロード</div>
-        <div className="t-body text-apple-fg-2 mb-1">
+        <FileText size={28} strokeWidth={1.4} className="text-apple-fg-2" aria-hidden="true" />
+        <div className="t-subtitle text-apple-fg">資料をアップロード</div>
+        <div className="t-body text-apple-fg-2">
           ドラッグ＆ドロップ または クリックして選択
         </div>
         <div className="t-caption text-apple-fg-2">{ACCEPT_PRETTY}</div>
@@ -127,8 +129,12 @@ export function FileUpload({ onResult }: Props) {
           )}
           {status === 'error' && errorMsg && (
             <div className="space-y-3">
-              <div className="t-body text-apple-fg">⚠ {errorMsg}</div>
-              <button type="button" onClick={reset} className="link-chev">
+              <div className="t-body text-apple-fg flex items-start gap-2">
+                <AlertCircle size={16} strokeWidth={1.6} className="mt-1 shrink-0" aria-hidden="true" />
+                <span>{errorMsg}</span>
+              </div>
+              <button type="button" onClick={reset} className="link-chev inline-flex items-center gap-1">
+                <RotateCcw size={14} strokeWidth={1.6} aria-hidden="true" />
                 別のファイルを試す
               </button>
             </div>
@@ -136,9 +142,10 @@ export function FileUpload({ onResult }: Props) {
           {status === 'done' && (
             <div className="space-y-3">
               <div className="t-body text-apple-fg">
-                ✓ 分析完了。下に結果を表示しました。
+                分析完了。下に結果を表示しました。
               </div>
-              <button type="button" onClick={reset} className="link-chev">
+              <button type="button" onClick={reset} className="link-chev inline-flex items-center gap-1">
+                <RotateCcw size={14} strokeWidth={1.6} aria-hidden="true" />
                 別のファイルを分析
               </button>
             </div>

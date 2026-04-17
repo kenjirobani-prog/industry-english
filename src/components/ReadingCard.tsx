@@ -1,12 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { Volume2, X } from 'lucide-react';
 import type { Reading } from '@/types';
 import { speak, cancelSpeech, isTTSAvailable } from '@/lib/tts';
 import { getKeywordByTerm, getPhraseByText } from '@/lib/data';
 
 type Props = {
   reading: Reading;
+  onOpen?: () => void;
 };
 
 type TermInfo = {
@@ -20,7 +22,6 @@ function lookupTerm(term: string, industryId: string): TermInfo | null {
   if (kw) return { term: kw.term, meaning_ja: kw.meaning_ja, kind: 'keyword' };
   const ph = getPhraseByText(term, industryId);
   if (ph) return { term: ph.phrase, meaning_ja: ph.meaning_ja, kind: 'phrase' };
-  // Fallback: try across industries
   const kwAny = getKeywordByTerm(term);
   if (kwAny)
     return { term: kwAny.term, meaning_ja: kwAny.meaning_ja, kind: 'keyword' };
@@ -48,13 +49,12 @@ function formatDate(iso: string): string {
   }
 }
 
-export function ReadingCard({ reading }: Props) {
+export function ReadingCard({ reading, onOpen }: Props) {
   const ttsReady = isTTSAvailable();
   const [showTranslation, setShowTranslation] = useState(false);
   const [selectedTerm, setSelectedTerm] = useState<TermInfo | null>(null);
+  const [opened, setOpened] = useState(false);
 
-  // Pre-compute the regex matching all highlighted terms (longer first to
-  // avoid partial overlaps).
   const matcher = useMemo(() => {
     if (reading.highlighted_terms.length === 0) return null;
     const sorted = [...reading.highlighted_terms].sort(
@@ -66,11 +66,13 @@ export function ReadingCard({ reading }: Props) {
 
   const handleTermClick = (raw: string) => {
     const info = lookupTerm(raw, reading.industryId);
-    if (info) {
-      setSelectedTerm(info);
-    } else {
-      setSelectedTerm({ term: raw, meaning_ja: '（語義データなし）', kind: 'keyword' });
-    }
+    if (info) setSelectedTerm(info);
+    else
+      setSelectedTerm({
+        term: raw,
+        meaning_ja: '（語義データなし）',
+        kind: 'keyword',
+      });
   };
 
   const renderBody = () => {
@@ -97,11 +99,22 @@ export function ReadingCard({ reading }: Props) {
 
   const handleSpeakAll = () => {
     speak(reading.body_en, { rate: 0.95 });
+    if (!opened) {
+      setOpened(true);
+      onOpen?.();
+    }
+  };
+
+  const handleToggleTranslation = () => {
+    setShowTranslation((v) => !v);
+    if (!opened) {
+      setOpened(true);
+      onOpen?.();
+    }
   };
 
   return (
     <article className="w-full rounded-[18px] bg-apple-gray text-apple-fg px-7 sm:px-10 py-10 sm:py-12 fade-up">
-      {/* Meta */}
       <div className="flex items-center gap-3 t-caption text-apple-fg-2 mb-3">
         <span className="t-eyebrow text-[var(--accent-strong)]">Reading</span>
         <span aria-hidden>·</span>
@@ -112,12 +125,10 @@ export function ReadingCard({ reading }: Props) {
         <span>~{reading.reading_time_minutes} min read</span>
       </div>
 
-      {/* Title */}
       <h3 className="t-section-title text-apple-fg leading-tight mb-7">
         {reading.title}
       </h3>
 
-      {/* Body */}
       <div
         className="text-apple-fg leading-[1.7] mb-6"
         style={{ fontSize: '18px', letterSpacing: '-0.01em' }}
@@ -125,13 +136,12 @@ export function ReadingCard({ reading }: Props) {
         {renderBody()}
       </div>
 
-      {/* Term tooltip / inline panel */}
       {selectedTerm && (
         <div className="mb-6 rounded-xl bg-apple-white border border-apple-line p-5 fade-up">
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="t-eyebrow text-[var(--accent-strong)] mb-1">
-                {selectedTerm.kind === 'phrase' ? 'Phrase' : 'Keyword'}
+                {selectedTerm.kind === 'phrase' ? 'Expression' : 'Word'}
               </div>
               <div className="t-subtitle font-semibold text-apple-fg leading-snug">
                 {selectedTerm.term}
@@ -144,15 +154,14 @@ export function ReadingCard({ reading }: Props) {
               type="button"
               onClick={() => setSelectedTerm(null)}
               aria-label="閉じる"
-              className="t-caption text-apple-fg-2 hover:text-apple-fg"
+              className="text-apple-fg-2 hover:text-apple-fg"
             >
-              ✕
+              <X size={16} strokeWidth={1.6} aria-hidden="true" />
             </button>
           </div>
         </div>
       )}
 
-      {/* Controls */}
       <div className="flex flex-wrap gap-3 mb-4">
         <button
           type="button"
@@ -161,18 +170,18 @@ export function ReadingCard({ reading }: Props) {
           disabled={!ttsReady}
           className="btn btn-primary"
         >
-          🔊 全文を読み上げ
+          <Volume2 size={16} strokeWidth={1.6} aria-hidden="true" />
+          全文を読み上げ
         </button>
         <button
           type="button"
-          onClick={() => setShowTranslation((v) => !v)}
+          onClick={handleToggleTranslation}
           className="btn btn-ghost bg-white"
         >
           {showTranslation ? '日本語訳を隠す' : '日本語訳を見る'}
         </button>
       </div>
 
-      {/* Translation */}
       {showTranslation && (
         <div className="rounded-xl bg-apple-white border border-apple-line p-6 fade-up">
           <div className="t-eyebrow text-apple-fg-2 mb-3">日本語訳</div>

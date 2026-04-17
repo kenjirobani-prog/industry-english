@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Check } from 'lucide-react';
 import { getIndustries, getScenes } from '@/lib/data';
 import { getPreferences, setPreferences } from '@/lib/storage';
 import type { EnglishLevel } from '@/types';
@@ -149,8 +150,8 @@ export default function OnboardingPage() {
                           : 'border-apple-line bg-apple-white hover:bg-apple-gray-2'
                       }`}
                     >
-                      <div className="text-2xl mb-2" aria-hidden>
-                        {s.emoji}
+                      <div className="t-eyebrow text-apple-fg-2 mb-2">
+                        {s.name_en}
                       </div>
                       <div className="t-subtitle text-apple-fg mb-1">
                         {s.name_ja}
@@ -208,7 +209,12 @@ export default function OnboardingPage() {
                         <div className="t-small text-apple-fg-2">{l.sub}</div>
                       </div>
                       {selected && (
-                        <span className="text-[var(--accent)]">✓</span>
+                        <Check
+                          size={16}
+                          strokeWidth={2}
+                          className="text-[var(--accent)]"
+                          aria-hidden="true"
+                        />
                       )}
                     </button>
                   );

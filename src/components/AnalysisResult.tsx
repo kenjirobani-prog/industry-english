@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Bookmark, Check, Volume2 } from 'lucide-react';
 import type { AnalysisResult, AnalysisQuiz, ExtractedKeyword } from '@/types';
 import { speak, cancelSpeech, isTTSAvailable } from '@/lib/tts';
 import { addUserKeywords } from '@/lib/storage';
@@ -12,10 +13,7 @@ type Props = {
 
 function FrequencyDots({ value }: { value: number }) {
   return (
-    <div
-      className="flex items-center gap-1"
-      aria-label={`頻度 ${value}/5`}
-    >
+    <div className="flex items-center gap-1" aria-label={`頻度 ${value}/5`}>
       {[1, 2, 3, 4, 5].map((i) => (
         <span
           key={i}
@@ -36,6 +34,7 @@ function KeywordRow({ kw }: { kw: ExtractedKeyword }) {
     <article className="rounded-xl border border-apple-line bg-apple-white p-6">
       <div className="flex items-start justify-between gap-4 mb-2">
         <div className="min-w-0">
+          <div className="t-eyebrow text-[var(--accent-strong)] mb-1">Word</div>
           <div className="t-subtitle text-apple-fg">{kw.term}</div>
           <div className="t-small text-apple-fg-2 mt-0.5">{kw.meaning_ja}</div>
         </div>
@@ -47,9 +46,9 @@ function KeywordRow({ kw }: { kw: ExtractedKeyword }) {
             onMouseLeave={cancelSpeech}
             disabled={!ttsReady}
             aria-label={`${kw.term} を発音`}
-            className="t-caption text-apple-fg-2 hover:text-apple-fg transition-colors"
+            className="text-apple-fg-2 hover:text-apple-fg transition-colors"
           >
-            🔊
+            <Volume2 size={16} strokeWidth={1.6} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -80,9 +79,10 @@ function KeywordRow({ kw }: { kw: ExtractedKeyword }) {
                 onClick={() => speak(ex.sentence, { rate: 0.95 })}
                 onMouseLeave={cancelSpeech}
                 disabled={!ttsReady}
-                className="link-chev mt-3 text-[12px]"
+                className="link-chev mt-3 text-[12px] inline-flex items-center gap-1"
               >
-                🔊 再生
+                <Volume2 size={14} strokeWidth={1.6} aria-hidden="true" />
+                再生
               </button>
             </div>
           ))}
@@ -150,8 +150,11 @@ function QuizItem({ quiz, index }: { quiz: AnalysisQuiz; index: number }) {
               : 'border-red-500 bg-red-50 text-red-900'
           }`}
         >
-          <div className="font-medium mb-1">
-            {selected === quiz.correctIndex ? '✓ 正解' : '✗ 不正解'}
+          <div className="font-medium mb-1 inline-flex items-center gap-1.5">
+            {selected === quiz.correctIndex ? (
+              <Check size={14} strokeWidth={2} aria-hidden="true" />
+            ) : null}
+            {selected === quiz.correctIndex ? '正解' : '不正解'}
           </div>
           {quiz.explanation && <div>{quiz.explanation}</div>}
         </div>
@@ -183,7 +186,7 @@ export function AnalysisResultView({ result }: Props) {
       </header>
 
       <section>
-        <h3 className="t-subtitle text-apple-fg mb-4">キーワード</h3>
+        <h3 className="t-subtitle text-apple-fg mb-4">Words</h3>
         <div className="space-y-3">
           {result.keywords.map((kw) => (
             <KeywordRow key={kw.term} kw={kw} />
@@ -209,12 +212,13 @@ export function AnalysisResultView({ result }: Props) {
             onClick={handleSave}
             className="btn btn-primary w-full"
           >
-            ★ キーワードを保存
+            <Bookmark size={16} strokeWidth={1.6} aria-hidden="true" />
+            キーワードを保存
           </button>
         ) : (
           <div className="rounded-xl bg-apple-gray p-6 text-center">
             <p className="t-body text-apple-fg">
-              ✓ {savedCount} 個のキーワードをライブラリに保存しました
+              {savedCount} 個のキーワードをライブラリに保存しました
               {savedCount < result.keywords.length && (
                 <span className="block t-small text-apple-fg-2 mt-1">
                   （{result.keywords.length - savedCount} 個は重複していたためスキップ）

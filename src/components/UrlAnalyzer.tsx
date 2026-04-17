@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { AlertCircle, RotateCcw } from 'lucide-react';
 import type { AnalysisResult } from '@/types';
 import { getPreferences } from '@/lib/storage';
 
@@ -94,8 +95,12 @@ export function UrlAnalyzer({ onResult }: Props) {
 
       {status === 'error' && errorMsg && (
         <div className="p-4 bg-apple-gray rounded-xl space-y-2">
-          <div className="t-body text-apple-fg">⚠ {errorMsg}</div>
-          <button type="button" onClick={reset} className="link-chev">
+          <div className="t-body text-apple-fg flex items-start gap-2">
+            <AlertCircle size={16} strokeWidth={1.6} className="mt-1 shrink-0" aria-hidden="true" />
+            <span>{errorMsg}</span>
+          </div>
+          <button type="button" onClick={reset} className="link-chev inline-flex items-center gap-1">
+            <RotateCcw size={14} strokeWidth={1.6} aria-hidden="true" />
             もう一度試す
           </button>
         </div>
@@ -103,7 +108,7 @@ export function UrlAnalyzer({ onResult }: Props) {
 
       {status === 'done' && (
         <div className="p-4 bg-apple-gray rounded-xl t-body text-apple-fg">
-          ✓ 分析完了。下に結果を表示しました。
+          分析完了。下に結果を表示しました。
         </div>
       )}
     </form>

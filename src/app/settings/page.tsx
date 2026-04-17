@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Check } from 'lucide-react';
 import { SiteHeader } from '@/components/SiteHeader';
 import { getIndustries, getScenes } from '@/lib/data';
 import { getPreferences, setPreferences } from '@/lib/storage';
@@ -140,8 +141,8 @@ export default function SettingsPage() {
                           : 'border-apple-line bg-apple-white hover:bg-apple-gray-2'
                       }`}
                     >
-                      <div className="text-2xl mb-2" aria-hidden>
-                        {s.emoji}
+                      <div className="t-eyebrow text-apple-fg-2 mb-2">
+                        {s.name_en}
                       </div>
                       <div className="t-body text-apple-fg font-medium mb-1">
                         {s.name_ja}
@@ -184,7 +185,12 @@ export default function SettingsPage() {
                         <div className="t-small text-apple-fg-2">{l.sub}</div>
                       </div>
                       {selected && (
-                        <span className="text-[var(--accent)]">✓</span>
+                        <Check
+                          size={16}
+                          strokeWidth={2}
+                          className="text-[var(--accent)]"
+                          aria-hidden="true"
+                        />
                       )}
                     </button>
                   );
@@ -200,7 +206,7 @@ export default function SettingsPage() {
                 onClick={handleSave}
                 className="btn btn-primary flex-1"
               >
-                {saved ? '✓ 保存しました' : '変更を保存'}
+                {saved ? '保存しました' : '変更を保存'}
               </button>
               <Link href="/dashboard" className="btn btn-ghost text-center">
                 キャンセル

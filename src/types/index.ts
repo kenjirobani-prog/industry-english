@@ -14,7 +14,8 @@ export type Scene = {
   name_ja: string;
   name_en: string;
   description_ja: string;
-  emoji: string;
+  /** Legacy decorative emoji — no longer rendered in the Apple-styled UI. */
+  emoji?: string;
   phrases?: Phrase[];
   passages?: Passage[];
   readings?: Reading[];

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Volume2, VolumeX } from 'lucide-react';
 import type { Example } from '@/types';
 import { speak, cancelSpeech, isTTSAvailable } from '@/lib/tts';
 
@@ -33,9 +34,9 @@ export function ExampleCard({ example, highlightTerm }: Props) {
 
   return (
     <article className="w-full rounded-[18px] bg-apple-gray text-apple-fg px-7 sm:px-10 py-10 sm:py-12 fade-up">
-      <div className="flex items-center gap-3 mb-6 text-apple-fg-2 t-caption">
-        <span className="t-eyebrow">{example.scene}</span>
-        <span>·</span>
+      <div className="flex items-center gap-3 mb-6 t-caption text-apple-fg-2">
+        <span className="t-eyebrow text-[var(--accent-strong)]">Example</span>
+        <span aria-hidden>·</span>
         <span className="truncate">出典: {example.source}</span>
       </div>
 
@@ -57,7 +58,8 @@ export function ExampleCard({ example, highlightTerm }: Props) {
           disabled={!ttsReady}
           className="btn btn-primary"
         >
-          🔊 通常スピード
+          <Volume2 size={16} strokeWidth={1.6} aria-hidden="true" />
+          通常スピード
         </button>
         <button
           type="button"
@@ -66,7 +68,8 @@ export function ExampleCard({ example, highlightTerm }: Props) {
           disabled={!ttsReady}
           className="btn btn-secondary"
         >
-          🐢 0.7x
+          <VolumeX size={16} strokeWidth={1.6} aria-hidden="true" />
+          0.7x
         </button>
         <button
           type="button"

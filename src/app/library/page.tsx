@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { Bookmark } from 'lucide-react';
 import { SiteHeader } from '@/components/SiteHeader';
 import { KeywordCard } from '@/components/KeywordCard';
 import { PhraseCard } from '@/components/PhraseCard';
@@ -149,12 +150,12 @@ export default function LibraryPage() {
             <p className="t-eyebrow text-apple-fg-2 mb-3">Library</p>
             <h1 className="t-headline text-apple-fg">キーワード一覧</h1>
             <p className="t-body text-apple-fg-2 mt-3">
-              {totalCount} 件
+              {totalCount} 件 ·{' '}
               {typeFilter === 'keyword'
-                ? 'のキーワード'
+                ? 'Words'
                 : typeFilter === 'phrase'
-                  ? 'のフレーズ'
-                  : 'のパッセージ'}
+                  ? 'Expressions'
+                  : 'In Context'}
             </p>
           </div>
         </section>
@@ -168,19 +169,19 @@ export default function LibraryPage() {
                   active={typeFilter === 'keyword'}
                   onClick={() => setTypeFilter('keyword')}
                 >
-                  キーワード
+                  Words
                 </Chip>
                 <Chip
                   active={typeFilter === 'phrase'}
                   onClick={() => setTypeFilter('phrase')}
                 >
-                  フレーズ
+                  Expressions
                 </Chip>
                 <Chip
                   active={typeFilter === 'passage'}
                   onClick={() => setTypeFilter('passage')}
                 >
-                  パッセージ
+                  In Context
                 </Chip>
               </div>
             </div>
@@ -221,7 +222,7 @@ export default function LibraryPage() {
                     active={sceneFilter === s.id}
                     onClick={() => setSceneFilter(s.id)}
                   >
-                    {s.emoji} {s.name_ja}
+                    {s.name_ja}
                   </Chip>
                 ))}
               </div>
@@ -239,7 +240,7 @@ export default function LibraryPage() {
                   active={bookmarksOnly}
                   onClick={() => setBookmarksOnly((v) => !v)}
                 >
-                  ★ ブックマークのみ
+                  ブックマークのみ
                 </Chip>
               </div>
             )}
@@ -273,7 +274,7 @@ export default function LibraryPage() {
                           if (!sc) return null;
                           return (
                             <span key={sid} className="t-caption text-apple-fg-2">
-                              {sc.emoji} {sc.name_ja}
+                              {sc.name_ja}
                             </span>
                           );
                         })}
@@ -295,7 +296,7 @@ export default function LibraryPage() {
                       >
                         <div className="flex items-center justify-between mb-2 gap-3">
                           <div className="t-eyebrow text-apple-fg-2">
-                            {sc ? `${sc.emoji} ${sc.name_ja}` : p.scene}
+                            {sc ? sc.name_ja : p.scene}
                           </div>
                           <span className="t-caption text-apple-fg-2">
                             難易度: {p.shadowing_difficulty}
@@ -335,9 +336,13 @@ export default function LibraryPage() {
                               </span>
                             )}
                             {isBookmarked && (
-                              <span className="text-[var(--accent)] t-small">
-                                ★
-                              </span>
+                              <Bookmark
+                                size={14}
+                                strokeWidth={1.6}
+                                fill="currentColor"
+                                className="text-[var(--accent)]"
+                                aria-hidden="true"
+                              />
                             )}
                           </div>
                         </div>
@@ -353,7 +358,7 @@ export default function LibraryPage() {
                                 key={sid}
                                 className="t-caption text-apple-fg-2"
                               >
-                                {sc.emoji} {sc.name_ja}
+                                {sc.name_ja}
                               </span>
                             );
                           })}

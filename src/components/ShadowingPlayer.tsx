@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Mic, Play, RotateCcw, Square } from 'lucide-react';
 import { speak, cancelSpeech, isTTSAvailable } from '@/lib/tts';
 import { incrementShadowingCount } from '@/lib/storage';
 
@@ -8,6 +9,7 @@ type Props = {
   keywordId: string;
   sentence: string;
   translation: string;
+  onComplete?: () => void;
 };
 
 type RecState =
@@ -33,7 +35,12 @@ function pickMimeType(): string | undefined {
   return undefined;
 }
 
-export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
+export function ShadowingPlayer({
+  keywordId,
+  sentence,
+  translation,
+  onComplete,
+}: Props) {
   const [recState, setRecState] = useState<RecState>('idle');
   const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
   const [count, setCount] = useState(0);
@@ -120,7 +127,9 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
         setRecState('recorded');
         stream.getTracks().forEach((t) => t.stop());
         streamRef.current = null;
-        setCount(incrementShadowingCount(keywordId));
+        const next = incrementShadowingCount(keywordId);
+        setCount(next);
+        onComplete?.();
       };
       recorder.onerror = () => {
         stream.getTracks().forEach((t) => t.stop());
@@ -168,7 +177,8 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
           disabled={!ttsReady}
           className="btn btn-on-dark-secondary"
         >
-          ▶ お手本を再生
+          <Play size={16} strokeWidth={1.6} aria-hidden="true" />
+          お手本を再生
         </button>
 
         {recState === 'recording' ? (
@@ -179,11 +189,12 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
             className="btn btn-on-dark-primary"
           >
             <span className="inline-block h-2 w-2 rounded-full bg-white rec-blink" />
+            <Square size={14} strokeWidth={1.8} aria-hidden="true" />
             録音中… タップで停止
           </button>
         ) : recState === 'requesting' ? (
           <button type="button" disabled className="btn btn-on-dark-secondary">
-            … マイク許可待ち
+            マイク許可待ち…
           </button>
         ) : recState === 'recorded' ? (
           <>
@@ -192,7 +203,8 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
               onClick={handlePlayRecording}
               className="btn btn-on-dark-primary"
             >
-              ▶ 再生
+              <Play size={16} strokeWidth={1.6} aria-hidden="true" />
+              再生
             </button>
             <button
               type="button"
@@ -202,7 +214,8 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
               }}
               className="btn btn-on-dark-secondary"
             >
-              ↻ もう一度録音
+              <RotateCcw size={16} strokeWidth={1.6} aria-hidden="true" />
+              もう一度録音
             </button>
           </>
         ) : recState === 'denied' || recState === 'unsupported' ? (
@@ -212,7 +225,8 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
             disabled={recState === 'unsupported'}
             className="btn btn-on-dark-secondary"
           >
-            🎤 再試行
+            <Mic size={16} strokeWidth={1.6} aria-hidden="true" />
+            再試行
           </button>
         ) : (
           <button
@@ -220,7 +234,8 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
             onClick={startRecording}
             className="btn btn-on-dark-primary"
           >
-            🎤 録音する
+            <Mic size={16} strokeWidth={1.6} aria-hidden="true" />
+            録音する
           </button>
         )}
       </div>
@@ -239,7 +254,7 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
 
       {recState === 'denied' && (
         <div className="rounded-xl bg-white/5 border border-white/10 p-4 t-body text-white">
-          🎤 マイクへのアクセスを許可してください。
+          マイクへのアクセスを許可してください。
           <p className="t-small text-apple-fg-on-dark-2 mt-1">
             ブラウザのアドレスバー横のサイト設定からマイクを許可した後、再試行してください。
           </p>

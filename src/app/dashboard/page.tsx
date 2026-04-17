@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { BookOpen, Settings as SettingsIcon } from 'lucide-react';
 import { SiteHeader } from '@/components/SiteHeader';
 import {
   getIndustry,
@@ -66,7 +67,7 @@ export default function DashboardPage() {
               href="/settings"
               className="inline-flex items-center gap-2 t-caption text-apple-fg-2 hover:text-apple-fg transition-colors mb-6"
             >
-              <span aria-hidden>⚙</span>
+              <SettingsIcon size={14} strokeWidth={1.6} aria-hidden="true" />
               <span>
                 {industryName ?? '—'}
                 <span className="mx-2 text-apple-line">·</span>
@@ -126,28 +127,31 @@ export default function DashboardPage() {
                     href={`/lesson/${scene.id}`}
                     className="group rounded-xl border border-apple-line bg-apple-white hover:bg-apple-gray transition-colors p-7"
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <span className="text-3xl" aria-hidden>
-                        {scene.emoji}
-                      </span>
-                      <div className="flex flex-col items-end gap-1">
-                        <span className="t-caption text-apple-fg-2">
-                          {kws.length} keywords
-                        </span>
-                        {readings.length > 0 && (
-                          <span className="t-caption text-[var(--accent-strong)] border border-[var(--accent)]/40 rounded-full px-2 py-0.5">
-                            Reading 付き · {readings.length}本
-                          </span>
-                        )}
-                      </div>
+                    <div className="t-eyebrow text-apple-fg-2 mb-3">
+                      {scene.name_en}
                     </div>
-                    <div className="t-subtitle text-apple-fg mb-1">
+                    <div className="t-subtitle text-apple-fg mb-2">
                       {scene.name_ja}
                     </div>
                     <div className="t-small text-apple-fg-2 mb-5 leading-snug">
                       {scene.description_ja}
                     </div>
-                    <span className="link-chev t-small">Start lesson</span>
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <span className="link-chev t-small">Start lesson</span>
+                      <div className="flex items-center gap-2 t-caption text-apple-fg-2">
+                        <span>{kws.length} keywords</span>
+                        {readings.length > 0 && (
+                          <span className="inline-flex items-center gap-1 text-[var(--accent-strong)] border border-[var(--accent)]/40 rounded-full px-2 py-0.5">
+                            <BookOpen
+                              size={11}
+                              strokeWidth={1.6}
+                              aria-hidden="true"
+                            />
+                            Reading {readings.length}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </Link>
                 );
               })}
@@ -169,7 +173,7 @@ export default function DashboardPage() {
                       href={`/lesson/${s.id}`}
                       className="t-small rounded-full border border-apple-line bg-apple-white hover:bg-apple-gray-2 px-4 py-2 text-apple-fg transition-colors"
                     >
-                      {s.emoji} {getScene(s.id)?.name_ja}
+                      {getScene(s.id)?.name_ja}
                     </Link>
                   ))}
               </div>

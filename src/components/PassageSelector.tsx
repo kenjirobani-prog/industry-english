@@ -14,7 +14,7 @@ type Source = {
 type Props = {
   selectedKey: string;
   onSelect: (s: Source) => void;
-  shortExample: { sentence: string; translation: string } | null;
+  shortExample: { sentence: string; translation: string; label?: string } | null;
   passages: Passage[];
 };
 
@@ -39,9 +39,7 @@ function DifficultyBadge({ d }: { d: ShadowingDifficulty }) {
           <span
             key={i}
             className={`block h-1 w-1 rounded-full ${
-              i <= dots
-                ? 'bg-[var(--accent-on-dark)]'
-                : 'bg-white/15'
+              i <= dots ? 'bg-[var(--accent-on-dark)]' : 'bg-white/15'
             }`}
           />
         ))}
@@ -70,10 +68,10 @@ export function PassageSelector({
           onClick={() =>
             onSelect({
               key: 'short',
-              label: '短い例文',
+              label: shortExample.label ?? 'Short Example',
               text: shortExample.sentence,
               translation: shortExample.translation,
-              sourceLabel: '例文',
+              sourceLabel: shortExample.label ?? 'Example',
             })
           }
           className={`w-full text-left rounded-xl px-4 py-3 transition-colors ${
@@ -83,7 +81,9 @@ export function PassageSelector({
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="t-small text-white">短い例文</span>
+            <span className="t-small text-white">
+              {shortExample.label ?? 'Short Example'}
+            </span>
             <span className="t-caption text-apple-fg-on-dark-2">
               ~{shortExample.sentence.split(/\s+/).length} words
             </span>
@@ -100,7 +100,7 @@ export function PassageSelector({
             onClick={() =>
               onSelect({
                 key,
-                label: `パッセージ ${i + 1}`,
+                label: `In Context ${i + 1}`,
                 text: p.text,
                 translation: p.translation_ja,
                 difficulty: p.shadowing_difficulty,
@@ -115,7 +115,7 @@ export function PassageSelector({
           >
             <div className="flex items-center justify-between gap-3">
               <span className="t-small text-white">
-                パッセージ {i + 1}
+                In Context {i + 1}
                 <span className="text-apple-fg-on-dark-2 ml-2">· {p.source}</span>
               </span>
               <div className="flex items-center gap-3 shrink-0">

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { IndustryThemeProvider } from '@/components/IndustryThemeProvider';
+import { MobileTabBar } from '@/components/MobileTabBar';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -13,9 +14,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ja" className="h-full">
-      <body className="min-h-full flex flex-col bg-apple-white text-apple-fg">
+      <body className="min-h-full flex flex-col bg-apple-white text-apple-fg pb-[64px] md:pb-0">
         <IndustryThemeProvider />
         {children}
+        <MobileTabBar />
       </body>
     </html>
   );

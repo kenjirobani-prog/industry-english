@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Volume2 } from 'lucide-react';
 import type { Phrase } from '@/types';
 import { speak, cancelSpeech, isTTSAvailable } from '@/lib/tts';
 
@@ -15,7 +16,7 @@ export function PhraseCard({ phrase }: Props) {
   return (
     <article className="w-full rounded-[18px] bg-apple-gray text-apple-fg px-7 sm:px-10 py-10 sm:py-12 fade-up">
       <div className="t-eyebrow text-[var(--accent-strong)] mb-3">
-        Phrase
+        Expression
       </div>
       <p className="t-section-title font-semibold text-apple-fg leading-snug mb-3">
         {phrase.phrase}
@@ -37,17 +38,16 @@ export function PhraseCard({ phrase }: Props) {
               {showTranslation && (
                 <p className="t-small text-apple-fg-2 mt-2">{ex.translation}</p>
               )}
-              <div className="flex items-center gap-3 mt-3">
-                <button
-                  type="button"
-                  onClick={() => speak(ex.sentence, { rate: 0.95 })}
-                  onMouseLeave={cancelSpeech}
-                  disabled={!ttsReady}
-                  className="link-chev t-small"
-                >
-                  🔊 再生
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => speak(ex.sentence, { rate: 0.95 })}
+                onMouseLeave={cancelSpeech}
+                disabled={!ttsReady}
+                className="link-chev t-small mt-3 inline-flex items-center gap-1"
+              >
+                <Volume2 size={14} strokeWidth={1.6} aria-hidden="true" />
+                再生
+              </button>
             </div>
           ))}
         </div>
@@ -61,7 +61,8 @@ export function PhraseCard({ phrase }: Props) {
           disabled={!ttsReady}
           className="btn btn-primary"
         >
-          🔊 フレーズを聴く
+          <Volume2 size={16} strokeWidth={1.6} aria-hidden="true" />
+          フレーズを聴く
         </button>
         <button
           type="button"
