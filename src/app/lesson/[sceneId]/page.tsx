@@ -11,17 +11,21 @@ import { PhraseCard } from '@/components/PhraseCard';
 import { PassageSelector } from '@/components/PassageSelector';
 import { ShadowingPlayer } from '@/components/ShadowingPlayer';
 import { QuizCard } from '@/components/QuizCard';
+import { ReadingCard } from '@/components/ReadingCard';
 import {
   getKeywordsByIndustry,
   getKeywordsByScene,
   getPassagesByScene,
   getPhrasesByScene,
+  getReadingsByScene,
   getScene,
 } from '@/lib/data';
 import { recordLessonComplete } from '@/lib/storage';
 import { warmupVoices } from '@/lib/tts';
 
-const STEP_LABELS = ['キーワード', '例文', 'シャドウイング', 'クイズ'];
+const STEP_LABELS = ['キーワード', '例文', 'シャドウイング', 'クイズ', 'Reading'];
+
+type Step = 1 | 2 | 3 | 4 | 5;
 
 type Params = Promise<{ sceneId: string }>;
 
@@ -45,11 +49,16 @@ export default function LessonPage({ params }: { params: Params }) {
     () => (scene ? getPassagesByScene(scene.id) : []),
     [scene],
   );
+  const sceneReadings = useMemo(
+    () => (scene ? getReadingsByScene(scene.id) : []),
+    [scene],
+  );
 
   const [kwIndex, setKwIndex] = useState(0);
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [step, setStep] = useState<Step>(1);
   const [done, setDone] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
+  const [readingsCompleted, setReadingsCompleted] = useState(0);
   const [selectedSourceKey, setSelectedSourceKey] = useState<string>('short');
   const [shadowText, setShadowText] = useState<{
     text: string;
@@ -127,12 +136,7 @@ export default function LessonPage({ params }: { params: Params }) {
     setSelectedSourceKey('short');
   }, [kwIndex]);
 
-  const handleNext = () => {
-    if (step < 4) setStep((s) => (s + 1) as 1 | 2 | 3 | 4);
-  };
-
-  const handleQuizComplete = (allCorrect: boolean) => {
-    if (allCorrect) setCorrectCount((c) => c + 1);
+  const advanceToNextKeyword = () => {
     if (kwIndex < sceneKeywords.length - 1) {
       setKwIndex((i) => i + 1);
       setStep(1);
@@ -146,7 +150,34 @@ export default function LessonPage({ params }: { params: Params }) {
     }
   };
 
+  const handleNext = () => {
+    if (step < 4) setStep((s) => (s + 1) as Step);
+  };
+
+  const handleQuizComplete = (allCorrect: boolean) => {
+    if (allCorrect) setCorrectCount((c) => c + 1);
+    if (sceneReadings.length > 0) {
+      setStep(5);
+    } else {
+      advanceToNextKeyword();
+    }
+  };
+
+  const handleReadingComplete = () => {
+    setReadingsCompleted((n) => n + 1);
+    advanceToNextKeyword();
+  };
+
+  const currentReading =
+    sceneReadings.length > 0
+      ? sceneReadings[kwIndex % sceneReadings.length]
+      : null;
+
   if (done) {
+    const accuracy =
+      sceneKeywords.length === 0
+        ? 0
+        : Math.round((correctCount / sceneKeywords.length) * 100);
     return (
       <>
         <SiteHeader />
@@ -156,13 +187,43 @@ export default function LessonPage({ params }: { params: Params }) {
               <p className="t-eyebrow text-[var(--accent-strong)] mb-3">
                 Lesson Complete
               </p>
-              <h1 className="t-headline text-apple-fg mb-4">
+              <h1 className="t-headline text-apple-fg mb-3">
                 お疲れさまでした
               </h1>
-              <p className="t-body text-apple-fg-2 mb-1">{scene.name_ja}</p>
-              <p className="t-small text-apple-fg-2 mb-10">
-                完答 {correctCount} / {sceneKeywords.length} キーワード
-              </p>
+              <p className="t-body text-apple-fg-2 mb-10">{scene.name_ja}</p>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10 text-left">
+                <div className="rounded-xl bg-apple-gray p-5">
+                  <div className="t-caption text-apple-fg-2">習得キーワード</div>
+                  <div className="t-section-title text-apple-fg mt-1">
+                    {sceneKeywords.length}
+                  </div>
+                </div>
+                <div className="rounded-xl bg-apple-gray p-5">
+                  <div className="t-caption text-apple-fg-2">クイズ正答率</div>
+                  <div className="t-section-title text-apple-fg mt-1">
+                    {accuracy}
+                    <span className="t-body text-apple-fg-2">%</span>
+                  </div>
+                </div>
+                <div className="rounded-xl bg-apple-gray p-5">
+                  <div className="t-caption text-apple-fg-2">シャドウイング</div>
+                  <div className="t-section-title text-apple-fg mt-1">
+                    {sceneKeywords.length}
+                    <span className="t-body text-apple-fg-2"> ステップ</span>
+                  </div>
+                </div>
+                <div className="rounded-xl bg-apple-gray p-5">
+                  <div className="t-caption text-apple-fg-2">Reading</div>
+                  <div className="t-section-title text-apple-fg mt-1">
+                    {readingsCompleted > 0 ? '✓' : '—'}
+                    <span className="t-body text-apple-fg-2 ml-2">
+                      {readingsCompleted} 本
+                    </span>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link href="/dashboard" className="btn btn-primary">
                   ダッシュボードへ
@@ -174,6 +235,7 @@ export default function LessonPage({ params }: { params: Params }) {
                     setStep(1);
                     setDone(false);
                     setCorrectCount(0);
+                    setReadingsCompleted(0);
                   }}
                   className="btn btn-ghost"
                 >
@@ -205,7 +267,7 @@ export default function LessonPage({ params }: { params: Params }) {
             </div>
           </div>
 
-          <ProgressBar current={step} total={4} labels={STEP_LABELS} />
+          <ProgressBar current={step} total={5} labels={STEP_LABELS} />
 
           <div className="pt-2 space-y-4">
             {step === 1 && <KeywordCard keyword={currentKw} />}
@@ -254,6 +316,9 @@ export default function LessonPage({ params }: { params: Params }) {
                 onComplete={handleQuizComplete}
               />
             )}
+            {step === 5 && currentReading && (
+              <ReadingCard reading={currentReading} />
+            )}
           </div>
 
           {step < 4 && (
@@ -271,6 +336,27 @@ export default function LessonPage({ params }: { params: Params }) {
                 className="btn btn-primary"
               >
                 続ける
+              </button>
+            </div>
+          )}
+
+          {step === 5 && (
+            <div className="flex items-center justify-between pt-2">
+              <button
+                type="button"
+                onClick={() => router.push('/dashboard')}
+                className="link-chev t-small"
+              >
+                中断
+              </button>
+              <button
+                type="button"
+                onClick={handleReadingComplete}
+                className="btn btn-primary"
+              >
+                {kwIndex < sceneKeywords.length - 1
+                  ? '次のキーワードへ'
+                  : 'レッスン完了'}
               </button>
             </div>
           )}

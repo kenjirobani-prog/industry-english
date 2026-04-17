@@ -17,6 +17,20 @@ export type Scene = {
   emoji: string;
   phrases?: Phrase[];
   passages?: Passage[];
+  readings?: Reading[];
+};
+
+export type Reading = {
+  id: string;
+  industryId: string;
+  sceneIds: string[];
+  title: string;
+  source: string;
+  date: string; // ISO date e.g. "2026-04-14"
+  body_en: string;
+  body_ja: string;
+  highlighted_terms: string[];
+  reading_time_minutes: number;
 };
 
 export type Phrase = {
@@ -68,6 +82,7 @@ export type SeedData = {
   keywords: Keyword[];
   phrases: Phrase[];
   passages: Passage[];
+  readings: Reading[];
 };
 
 export type EnglishLevel = 'beginner' | 'intermediate' | 'advanced';

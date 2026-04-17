@@ -8,6 +8,7 @@ import {
   getIndustry,
   getKeywordsByIndustry,
   getKeywordsByScene,
+  getReadingsByScene,
   getScene,
   getScenes,
 } from '@/lib/data';
@@ -118,6 +119,7 @@ export default function DashboardPage() {
             <div className="grid sm:grid-cols-2 gap-3">
               {todayScenes.map((scene) => {
                 const kws = getKeywordsByScene(scene.id);
+                const readings = getReadingsByScene(scene.id);
                 return (
                   <Link
                     key={scene.id}
@@ -128,9 +130,16 @@ export default function DashboardPage() {
                       <span className="text-3xl" aria-hidden>
                         {scene.emoji}
                       </span>
-                      <span className="t-caption text-apple-fg-2">
-                        {kws.length} keywords
-                      </span>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="t-caption text-apple-fg-2">
+                          {kws.length} keywords
+                        </span>
+                        {readings.length > 0 && (
+                          <span className="t-caption text-[var(--accent-strong)] border border-[var(--accent)]/40 rounded-full px-2 py-0.5">
+                            Reading 付き · {readings.length}本
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <div className="t-subtitle text-apple-fg mb-1">
                       {scene.name_ja}
