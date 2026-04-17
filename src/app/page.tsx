@@ -44,187 +44,199 @@ export default function OnboardingPage() {
 
   return (
     <main className="flex-1 flex flex-col">
-      <div className="max-w-2xl mx-auto px-5 py-12 w-full flex-1 flex flex-col">
-        <div className="text-center mb-10">
-          <div className="font-display tracking-[0.4em] text-xs text-gold mb-3 uppercase">
-            Industry English
-          </div>
-          <h1 className="font-display text-3xl sm:text-5xl text-amber-100 leading-tight">
-            業界の英語を、<br />
-            <span className="text-amber-400">あなたの言葉に。</span>
+      {/* Hero */}
+      <section className="section bg-apple-white">
+        <div className="section-narrow text-center fade-in">
+          <p className="t-eyebrow text-apple-fg-2 mb-4">Industry English</p>
+          <h1 className="t-headline text-apple-fg">
+            業界の英語を、
+            <br />
+            あなたの言葉に。
           </h1>
-          <p className="text-sm text-amber-100/70 mt-4">
-            教科書英語ではなく、業界固有の語彙・言い回し・ニュアンスをレッスン形式で学ぶ。
+          <p className="t-body-lg text-apple-fg-2 mt-6 max-w-[560px] mx-auto">
+            教科書英語ではなく、業界固有の語彙・言い回し・ニュアンスを
+            レッスン形式で学ぶ。
           </p>
         </div>
+      </section>
 
-        <div className="flex items-center justify-center gap-2 mb-8">
-          {[1, 2, 3].map((n) => (
-            <span
-              key={n}
-              className={`h-1.5 rounded-full transition-all ${
-                step === n
-                  ? 'w-10 bg-amber-400'
-                  : n < step
-                    ? 'w-6 bg-gold'
-                    : 'w-6 bg-surface-3'
-              }`}
-            />
-          ))}
+      {/* Steps */}
+      <section className="section bg-apple-gray">
+        <div className="section-wide">
+          {/* Step indicator */}
+          <div className="flex items-center justify-center gap-2 mb-12">
+            {[1, 2, 3].map((n) => (
+              <span
+                key={n}
+                className={`h-1 rounded-full transition-all duration-300 ${
+                  step === n
+                    ? 'w-10 bg-apple-fg'
+                    : n < step
+                      ? 'w-6 bg-apple-fg-2'
+                      : 'w-6 bg-apple-line'
+                }`}
+              />
+            ))}
+          </div>
+
+          {step === 1 && (
+            <div className="fade-up">
+              <h2 className="t-section-title text-apple-fg text-center mb-10">
+                業界を選ぶ
+              </h2>
+              <div className="grid sm:grid-cols-2 gap-3 max-w-[692px] mx-auto">
+                {industries.map((ind) => {
+                  const selected = industryId === ind.id;
+                  return (
+                    <button
+                      key={ind.id}
+                      type="button"
+                      disabled={!ind.available}
+                      onClick={() => setIndustryId(ind.id)}
+                      className={`text-left rounded-xl border p-6 transition-colors relative ${
+                        selected
+                          ? 'border-[var(--accent)] bg-accent-soft'
+                          : 'border-apple-line bg-apple-white hover:bg-apple-gray-2'
+                      } ${!ind.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                    >
+                      <div className="t-subtitle text-apple-fg mb-1">
+                        {ind.name_ja}
+                      </div>
+                      <div className="t-small text-apple-fg-2">
+                        {ind.description_ja}
+                      </div>
+                      {!ind.available && (
+                        <span className="absolute top-3 right-4 t-eyebrow text-apple-fg-2">
+                          Coming Soon
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-12 flex justify-center">
+                <button
+                  type="button"
+                  disabled={!industryId}
+                  onClick={() => setStep(2)}
+                  className="btn btn-primary"
+                >
+                  続ける
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="fade-up">
+              <h2 className="t-section-title text-apple-fg text-center mb-2">
+                シーンを選ぶ
+              </h2>
+              <p className="t-small text-apple-fg-2 text-center mb-10">
+                複数選択できます
+              </p>
+              <div className="grid sm:grid-cols-2 gap-3 max-w-[692px] mx-auto">
+                {scenes.map((s) => {
+                  const selected = sceneIds.includes(s.id);
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => toggleScene(s.id)}
+                      className={`text-left rounded-xl border p-6 transition-colors cursor-pointer ${
+                        selected
+                          ? 'border-[var(--accent)] bg-accent-soft'
+                          : 'border-apple-line bg-apple-white hover:bg-apple-gray-2'
+                      }`}
+                    >
+                      <div className="text-2xl mb-2" aria-hidden>
+                        {s.emoji}
+                      </div>
+                      <div className="t-subtitle text-apple-fg mb-1">
+                        {s.name_ja}
+                      </div>
+                      <div className="t-small text-apple-fg-2 leading-snug">
+                        {s.description_ja}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-12 flex items-center justify-between max-w-[692px] mx-auto">
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="link-chev"
+                >
+                  戻る
+                </button>
+                <button
+                  type="button"
+                  disabled={sceneIds.length === 0}
+                  onClick={() => setStep(3)}
+                  className="btn btn-primary"
+                >
+                  続ける
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="fade-up max-w-[560px] mx-auto">
+              <h2 className="t-section-title text-apple-fg text-center mb-10">
+                英語レベル
+              </h2>
+              <div className="space-y-2">
+                {LEVELS.map((l) => {
+                  const selected = level === l.value;
+                  return (
+                    <button
+                      key={l.value}
+                      type="button"
+                      onClick={() => setLevel(l.value)}
+                      className={`w-full flex items-center justify-between rounded-xl border p-5 transition-colors cursor-pointer ${
+                        selected
+                          ? 'border-[var(--accent)] bg-accent-soft'
+                          : 'border-apple-line bg-apple-white hover:bg-apple-gray-2'
+                      }`}
+                    >
+                      <div className="text-left">
+                        <div className="t-body text-apple-fg font-medium">
+                          {l.label}
+                        </div>
+                        <div className="t-small text-apple-fg-2">{l.sub}</div>
+                      </div>
+                      {selected && (
+                        <span className="text-[var(--accent)]">✓</span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-12 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  className="link-chev"
+                >
+                  戻る
+                </button>
+                <button
+                  type="button"
+                  onClick={finish}
+                  className="btn btn-primary"
+                >
+                  はじめる
+                </button>
+              </div>
+            </div>
+          )}
         </div>
+      </section>
 
-        {step === 1 && (
-          <section>
-            <h2 className="font-display text-xl text-amber-200 mb-5 tracking-wider uppercase">
-              Step 1 — 業界を選ぶ
-            </h2>
-            <div className="grid sm:grid-cols-2 gap-3">
-              {industries.map((ind) => {
-                const selected = industryId === ind.id;
-                return (
-                  <button
-                    key={ind.id}
-                    type="button"
-                    disabled={!ind.available}
-                    onClick={() => setIndustryId(ind.id)}
-                    className={`text-left rounded-2xl border p-4 transition relative ${
-                      selected
-                        ? 'border-amber-400 bg-amber-500/10'
-                        : 'border-border-soft bg-surface-1 hover:border-amber-500/40'
-                    } ${!ind.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                  >
-                    <div className="font-display text-lg text-amber-100 mb-1">
-                      {ind.name_ja}
-                    </div>
-                    <div className="text-xs text-amber-100/60">
-                      {ind.description_ja}
-                    </div>
-                    {!ind.available && (
-                      <span className="absolute top-2 right-3 text-[10px] tracking-widest text-amber-200/60 font-display">
-                        COMING SOON
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="mt-8 flex justify-end">
-              <button
-                type="button"
-                disabled={!industryId}
-                onClick={() => setStep(2)}
-                className="rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold px-6 py-3 disabled:opacity-40 disabled:cursor-not-allowed font-display tracking-wider uppercase text-sm"
-              >
-                次へ →
-              </button>
-            </div>
-          </section>
-        )}
-
-        {step === 2 && (
-          <section>
-            <h2 className="font-display text-xl text-amber-200 mb-5 tracking-wider uppercase">
-              Step 2 — シーンを選ぶ（複数可）
-            </h2>
-            <div className="grid sm:grid-cols-2 gap-3">
-              {scenes.map((s) => {
-                const selected = sceneIds.includes(s.id);
-                return (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() => toggleScene(s.id)}
-                    className={`text-left rounded-2xl border p-4 transition cursor-pointer ${
-                      selected
-                        ? 'border-amber-400 bg-amber-500/10'
-                        : 'border-border-soft bg-surface-1 hover:border-amber-500/40'
-                    }`}
-                  >
-                    <div className="text-2xl mb-2">{s.emoji}</div>
-                    <div className="font-display text-base text-amber-100 mb-1">
-                      {s.name_ja}
-                    </div>
-                    <div className="text-[11px] text-amber-100/60 leading-relaxed">
-                      {s.description_ja}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-            <div className="mt-8 flex justify-between">
-              <button
-                type="button"
-                onClick={() => setStep(1)}
-                className="text-sm text-amber-100/60 hover:text-amber-200 font-display tracking-wider uppercase"
-              >
-                ← 戻る
-              </button>
-              <button
-                type="button"
-                disabled={sceneIds.length === 0}
-                onClick={() => setStep(3)}
-                className="rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold px-6 py-3 disabled:opacity-40 disabled:cursor-not-allowed font-display tracking-wider uppercase text-sm"
-              >
-                次へ →
-              </button>
-            </div>
-          </section>
-        )}
-
-        {step === 3 && (
-          <section>
-            <h2 className="font-display text-xl text-amber-200 mb-5 tracking-wider uppercase">
-              Step 3 — 英語レベル
-            </h2>
-            <div className="space-y-2">
-              {LEVELS.map((l) => {
-                const selected = level === l.value;
-                return (
-                  <button
-                    key={l.value}
-                    type="button"
-                    onClick={() => setLevel(l.value)}
-                    className={`w-full flex items-center justify-between rounded-2xl border p-4 transition ${
-                      selected
-                        ? 'border-amber-400 bg-amber-500/10'
-                        : 'border-border-soft bg-surface-1 hover:border-amber-500/40'
-                    }`}
-                  >
-                    <div>
-                      <div className="font-display text-base text-amber-100">
-                        {l.label}
-                      </div>
-                      <div className="text-[11px] text-amber-100/60">
-                        {l.sub}
-                      </div>
-                    </div>
-                    {selected && <span className="text-amber-400">✓</span>}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="mt-8 flex justify-between">
-              <button
-                type="button"
-                onClick={() => setStep(2)}
-                className="text-sm text-amber-100/60 hover:text-amber-200 font-display tracking-wider uppercase"
-              >
-                ← 戻る
-              </button>
-              <button
-                type="button"
-                onClick={finish}
-                className="rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold px-6 py-3 font-display tracking-wider uppercase text-sm hover:brightness-110 transition"
-              >
-                はじめる ▸
-              </button>
-            </div>
-          </section>
-        )}
-      </div>
-
-      <footer className="text-center text-[10px] text-amber-100/30 py-4 font-display tracking-widest">
-        MVP · F&amp;B EDITION
+      <footer className="bg-apple-white py-8 text-center t-caption text-apple-fg-2">
+        MVP · F&amp;B + Digital Marketing Edition
       </footer>
     </main>
   );

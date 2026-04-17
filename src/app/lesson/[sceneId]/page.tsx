@@ -47,14 +47,13 @@ export default function LessonPage({ params }: { params: Params }) {
     return (
       <>
         <SiteHeader />
-        <main className="flex-1 flex items-center justify-center px-6">
+        <main className="flex-1 flex items-center justify-center bg-apple-white px-6">
           <div className="text-center">
-            <p className="text-amber-200 font-display mb-3">シーンが見つかりません</p>
-            <Link
-              href="/dashboard"
-              className="text-sm text-amber-400 underline"
-            >
-              ← ダッシュボードへ
+            <p className="t-subtitle text-apple-fg mb-3">
+              シーンが見つかりません
+            </p>
+            <Link href="/dashboard" className="link-chev">
+              ダッシュボードへ
             </Link>
           </div>
         </main>
@@ -66,7 +65,7 @@ export default function LessonPage({ params }: { params: Params }) {
     return (
       <>
         <SiteHeader />
-        <main className="flex-1 flex items-center justify-center text-amber-200/60">
+        <main className="flex-1 flex items-center justify-center bg-apple-white text-apple-fg-2 t-body">
           このシーンにはキーワードが登録されていません。
         </main>
       </>
@@ -78,11 +77,7 @@ export default function LessonPage({ params }: { params: Params }) {
   const distractors = industryKeywords.filter((k) => k.id !== currentKw.id);
 
   const handleNext = () => {
-    if (step < 4) {
-      setStep((s) => (s + 1) as 1 | 2 | 3 | 4);
-      return;
-    }
-    // step === 4 cannot reach here directly (QuizCard manages onComplete)
+    if (step < 4) setStep((s) => (s + 1) as 1 | 2 | 3 | 4);
   };
 
   const handleQuizComplete = (allCorrect: boolean) => {
@@ -91,7 +86,6 @@ export default function LessonPage({ params }: { params: Params }) {
       setKwIndex((i) => i + 1);
       setStep(1);
     } else {
-      // Lesson finished
       recordLessonComplete({
         sceneId: scene.id,
         completedAt: new Date().toISOString(),
@@ -105,40 +99,38 @@ export default function LessonPage({ params }: { params: Params }) {
     return (
       <>
         <SiteHeader />
-        <main className="flex-1 flex flex-col items-center justify-center px-6 py-12 text-center">
-          <div className="text-5xl mb-3">🥃</div>
-          <div className="font-display tracking-[0.4em] text-xs text-gold uppercase mb-2">
-            Lesson Complete
-          </div>
-          <h1 className="font-display text-3xl text-amber-200 mb-3">
-            お疲れさまでした
-          </h1>
-          <p className="text-sm text-amber-100/70 mb-1">
-            {scene.name_ja}
-          </p>
-          <p className="text-xs text-amber-100/50 mb-8">
-            完答 {correctCount} / {sceneKeywords.length} キーワード
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link
-              href="/dashboard"
-              className="rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold px-6 py-3 font-display tracking-wider uppercase text-sm hover:brightness-110 transition"
-            >
-              ダッシュボードへ
-            </Link>
-            <button
-              type="button"
-              onClick={() => {
-                setKwIndex(0);
-                setStep(1);
-                setDone(false);
-                setCorrectCount(0);
-              }}
-              className="rounded-full bg-surface-2 border border-border-soft text-amber-100 px-6 py-3 font-display tracking-wider uppercase text-sm hover:bg-surface-3 transition"
-            >
-              もう一度
-            </button>
-          </div>
+        <main className="flex-1 bg-apple-white">
+          <section className="section">
+            <div className="section-narrow text-center fade-in">
+              <p className="t-eyebrow text-[var(--accent-strong)] mb-3">
+                Lesson Complete
+              </p>
+              <h1 className="t-headline text-apple-fg mb-4">
+                お疲れさまでした
+              </h1>
+              <p className="t-body text-apple-fg-2 mb-1">{scene.name_ja}</p>
+              <p className="t-small text-apple-fg-2 mb-10">
+                完答 {correctCount} / {sceneKeywords.length} キーワード
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link href="/dashboard" className="btn btn-primary">
+                  ダッシュボードへ
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setKwIndex(0);
+                    setStep(1);
+                    setDone(false);
+                    setCorrectCount(0);
+                  }}
+                  className="btn btn-ghost"
+                >
+                  もう一度
+                </button>
+              </div>
+            </div>
+          </section>
         </main>
       </>
     );
@@ -147,27 +139,23 @@ export default function LessonPage({ params }: { params: Params }) {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <main className="flex-1 bg-apple-white">
+        <div className="max-w-[692px] mx-auto px-5 sm:px-6 py-10 space-y-8">
           {/* Header */}
           <div className="flex items-baseline justify-between gap-3">
             <div>
-              <div className="text-[10px] font-display uppercase tracking-widest text-gold">
+              <p className="t-eyebrow text-apple-fg-2">
                 {scene.emoji} {scene.name_en}
-              </div>
-              <h1 className="font-display text-xl text-amber-200">
-                {scene.name_ja}
-              </h1>
+              </p>
+              <h1 className="t-subtitle text-apple-fg mt-1">{scene.name_ja}</h1>
             </div>
-            <div className="text-[11px] text-amber-100/50 font-display tracking-wider uppercase">
+            <div className="t-caption text-apple-fg-2">
               {kwIndex + 1} / {sceneKeywords.length}
             </div>
           </div>
 
-          {/* Progress */}
           <ProgressBar current={step} total={4} labels={STEP_LABELS} />
 
-          {/* Step content */}
           <div className="pt-2">
             {step === 1 && <KeywordCard keyword={currentKw} />}
             {step === 2 && example && (
@@ -189,22 +177,21 @@ export default function LessonPage({ params }: { params: Params }) {
             )}
           </div>
 
-          {/* Step navigation (Steps 1-3 only; step 4 has its own controls) */}
           {step < 4 && (
-            <div className="flex justify-between pt-2">
+            <div className="flex items-center justify-between pt-2">
               <button
                 type="button"
                 onClick={() => router.push('/dashboard')}
-                className="text-xs text-amber-100/50 hover:text-amber-200 font-display tracking-wider uppercase"
+                className="link-chev t-small"
               >
-                ✕ 中断
+                中断
               </button>
               <button
                 type="button"
                 onClick={handleNext}
-                className="rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold px-6 py-3 font-display tracking-wider uppercase text-sm hover:brightness-110 transition"
+                className="btn btn-primary"
               >
-                次へ →
+                続ける
               </button>
             </div>
           )}

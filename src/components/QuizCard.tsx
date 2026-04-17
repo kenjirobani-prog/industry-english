@@ -8,7 +8,7 @@ type QuizMode = 'meaning' | 'fill-blank';
 
 type Props = {
   keyword: Keyword;
-  distractors: Keyword[]; // other keywords to use as wrong choices
+  distractors: Keyword[];
   onComplete: (allCorrect: boolean) => void;
 };
 
@@ -75,37 +75,37 @@ export function QuizCard({ keyword, distractors, onComplete }: Props) {
     mode === 'meaning' ? keyword.meaning_industry : keyword.term;
 
   return (
-    <section className="w-full max-w-xl mx-auto rounded-3xl border border-border-soft bg-surface-1/80 backdrop-blur p-6 sm:p-8">
-      <div className="text-[10px] font-display tracking-widest uppercase text-gold mb-3">
-        {mode === 'meaning' ? 'クイズ 1/2 — 業界での意味' : 'クイズ 2/2 — 穴埋め'}
+    <section className="w-full rounded-[18px] bg-apple-white border border-apple-line px-7 sm:px-10 py-10 sm:py-12 fade-up">
+      <div className="t-eyebrow text-[var(--accent-strong)] mb-3">
+        {mode === 'meaning' ? 'Quiz 1 of 2 — 業界での意味' : 'Quiz 2 of 2 — 穴埋め'}
       </div>
 
       {mode === 'meaning' ? (
-        <h3 className="font-display text-2xl text-amber-200 mb-5">
-          “{keyword.term}” のF&B業界における意味は?
+        <h3 className="t-section-title font-semibold text-apple-fg mb-8">
+          “{keyword.term}” の意味は?
         </h3>
       ) : (
-        <p className="text-lg text-amber-50 leading-relaxed mb-5">
+        <p className="t-subtitle text-apple-fg mb-8 font-normal leading-snug">
           {blankedSentence}
         </p>
       )}
 
-      <div className="space-y-2 mb-5">
+      <div className="space-y-2 mb-7">
         {choices.map((choice) => {
           const isSelected = selected === choice;
           const isCorrect = choice === correctValue;
-          let stateClass =
-            'bg-surface-2 border-border-soft hover:bg-surface-3 text-amber-50';
+          let cls =
+            'border-apple-line bg-apple-white text-apple-fg hover:bg-apple-gray';
           if (submitted) {
             if (isCorrect) {
-              stateClass = 'bg-emerald-700/30 border-emerald-500/60 text-emerald-100';
+              cls = 'border-emerald-600 bg-emerald-50 text-emerald-900';
             } else if (isSelected) {
-              stateClass = 'bg-red-700/30 border-red-500/60 text-red-100';
+              cls = 'border-red-500 bg-red-50 text-red-900';
             } else {
-              stateClass = 'bg-surface-2/50 border-border-soft text-amber-100/40';
+              cls = 'border-apple-line bg-apple-white text-apple-fg-2';
             }
           } else if (isSelected) {
-            stateClass = 'bg-amber-500/20 border-amber-400 text-amber-100';
+            cls = 'border-[var(--accent)] bg-accent-soft text-apple-fg';
           }
           return (
             <button
@@ -113,7 +113,7 @@ export function QuizCard({ keyword, distractors, onComplete }: Props) {
               type="button"
               disabled={submitted}
               onClick={() => setSelected(choice)}
-              className={`w-full text-left rounded-2xl border px-4 py-3 text-sm leading-relaxed transition ${stateClass}`}
+              className={`w-full text-left rounded-xl border px-5 py-4 t-body transition-colors ${cls}`}
             >
               {choice}
             </button>
@@ -126,25 +126,25 @@ export function QuizCard({ keyword, distractors, onComplete }: Props) {
           type="button"
           disabled={selected === null}
           onClick={handleSubmit}
-          className="w-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold py-3 disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 transition font-display tracking-wider uppercase text-sm"
+          className="btn btn-primary w-full"
         >
           回答する
         </button>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div
-            className={`rounded-2xl border px-4 py-3 text-sm ${
+            className={`rounded-xl border px-5 py-4 t-body ${
               selected === correctValue
-                ? 'border-emerald-500/40 bg-emerald-700/20 text-emerald-100'
-                : 'border-red-500/40 bg-red-700/20 text-red-100'
+                ? 'border-emerald-600 bg-emerald-50 text-emerald-900'
+                : 'border-red-500 bg-red-50 text-red-900'
             }`}
           >
-            {selected === correctValue ? '正解！' : '不正解。正解を確認しましょう。'}
+            {selected === correctValue ? '正解' : '不正解。正解を確認しましょう。'}
           </div>
           <button
             type="button"
             onClick={handleNext}
-            className="w-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold py-3 hover:brightness-110 transition font-display tracking-wider uppercase text-sm"
+            className="btn btn-primary w-full"
           >
             {mode === 'meaning' ? '穴埋めへ' : 'レッスン完了'}
           </button>

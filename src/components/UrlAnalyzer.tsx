@@ -50,11 +50,11 @@ export function UrlAnalyzer({ onResult }: Props) {
   };
 
   return (
-    <form onSubmit={handleAnalyze} className="space-y-4">
+    <form onSubmit={handleAnalyze} className="space-y-5">
       <div>
         <label
           htmlFor="url-input"
-          className="block text-[10px] font-display tracking-widest uppercase text-amber-200/70 mb-2"
+          className="block t-small text-apple-fg-2 mb-2"
         >
           記事・ブログ・レポートのURL
         </label>
@@ -68,45 +68,41 @@ export function UrlAnalyzer({ onResult }: Props) {
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://www.example.com/article"
           disabled={status === 'analyzing'}
-          className="w-full rounded-2xl bg-surface-1 border border-border-soft px-4 py-3 text-amber-50 placeholder-amber-100/30 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/40 transition disabled:opacity-50"
+          className="input"
         />
       </div>
 
       <button
         type="submit"
         disabled={status === 'analyzing' || url.trim().length === 0}
-        className="w-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold py-3 disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 transition font-display tracking-wider uppercase text-sm"
+        className="btn btn-primary w-full"
       >
-        {status === 'analyzing' ? '分析中...' : '分析する'}
+        {status === 'analyzing' ? '分析中…' : '分析する'}
       </button>
 
       {status === 'analyzing' && (
-        <div className="rounded-2xl bg-surface-2/80 border border-border-soft p-4 flex items-center gap-3">
-          <span className="inline-block h-2 w-2 rounded-full bg-amber-400 pulse-amber" />
-          <div className="text-sm text-amber-200">
-            URL を取得して Claude AI が分析中...
-            <p className="text-[11px] text-amber-100/60 mt-0.5">
+        <div className="p-4 bg-apple-gray rounded-xl flex items-center gap-3">
+          <span className="inline-block h-2 w-2 rounded-full bg-[var(--accent)] rec-blink" />
+          <div>
+            <div className="t-body text-apple-fg">URL を取得して分析中…</div>
+            <div className="t-small text-apple-fg-2">
               通常 10〜30 秒ほどかかります
-            </p>
+            </div>
           </div>
         </div>
       )}
 
       {status === 'error' && errorMsg && (
-        <div className="rounded-2xl border border-red-500/40 bg-red-700/15 p-4 space-y-2">
-          <div className="text-sm text-red-200">⚠ {errorMsg}</div>
-          <button
-            type="button"
-            onClick={reset}
-            className="text-[11px] font-display tracking-wider uppercase text-amber-200/70 hover:text-amber-200"
-          >
-            ↻ もう一度試す
+        <div className="p-4 bg-apple-gray rounded-xl space-y-2">
+          <div className="t-body text-apple-fg">⚠ {errorMsg}</div>
+          <button type="button" onClick={reset} className="link-chev">
+            もう一度試す
           </button>
         </div>
       )}
 
       {status === 'done' && (
-        <div className="rounded-2xl border border-emerald-500/40 bg-emerald-700/15 p-3 text-sm text-emerald-100">
+        <div className="p-4 bg-apple-gray rounded-xl t-body text-apple-fg">
           ✓ 分析完了。下に結果を表示しました。
         </div>
       )}

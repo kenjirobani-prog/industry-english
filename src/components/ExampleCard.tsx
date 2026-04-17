@@ -15,12 +15,12 @@ function highlight(sentence: string, term: string) {
   const parts = sentence.split(new RegExp(`(${escaped})`, 'gi'));
   return parts.map((part, i) =>
     part.toLowerCase() === term.toLowerCase() ? (
-      <mark
+      <span
         key={i}
-        className="bg-amber-400/20 text-amber-200 px-1 rounded font-semibold"
+        className="text-[var(--accent-strong)] font-medium underline decoration-[var(--accent)]/40 decoration-1 underline-offset-4"
       >
         {part}
-      </mark>
+      </span>
     ) : (
       <span key={i}>{part}</span>
     ),
@@ -32,49 +32,46 @@ export function ExampleCard({ example, highlightTerm }: Props) {
   const ttsReady = isTTSAvailable();
 
   return (
-    <article className="w-full max-w-xl mx-auto rounded-3xl border border-border-soft bg-surface-1/80 backdrop-blur p-6 sm:p-8">
-      <div className="flex items-center gap-2 mb-4">
-        <span className="text-[10px] font-display tracking-widest uppercase text-gold border border-gold/40 rounded-full px-2 py-0.5">
-          {example.scene}
-        </span>
-        <span className="text-[10px] text-amber-200/50 truncate">
-          出典: {example.source}
-        </span>
+    <article className="w-full rounded-[18px] bg-apple-gray text-apple-fg px-7 sm:px-10 py-10 sm:py-12 fade-up">
+      <div className="flex items-center gap-3 mb-6 text-apple-fg-2 t-caption">
+        <span className="t-eyebrow">{example.scene}</span>
+        <span>·</span>
+        <span className="truncate">出典: {example.source}</span>
       </div>
 
-      <p className="text-lg sm:text-xl leading-relaxed text-amber-50 font-light mb-4">
+      <p className="t-subtitle leading-snug text-apple-fg mb-5 font-normal">
         {highlight(example.sentence, highlightTerm)}
       </p>
 
       {showTranslation && (
-        <p className="text-sm text-amber-100/70 leading-relaxed border-l-2 border-amber-400/40 pl-3 mb-5">
+        <p className="t-body text-apple-fg-2 border-l border-apple-line pl-4 mb-7">
           {example.translation}
         </p>
       )}
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-3">
         <button
           type="button"
           onClick={() => speak(example.sentence, { rate: 1.0 })}
           onMouseLeave={cancelSpeech}
           disabled={!ttsReady}
-          className="flex items-center gap-2 rounded-full bg-amber-500/20 text-amber-200 border border-amber-500/40 px-4 py-2 text-xs font-semibold disabled:opacity-40 hover:bg-amber-500/30 transition"
+          className="btn btn-primary"
         >
-          <span aria-hidden>🔊</span> 通常スピード
+          🔊 通常スピード
         </button>
         <button
           type="button"
           onClick={() => speak(example.sentence, { rate: 0.7 })}
           onMouseLeave={cancelSpeech}
           disabled={!ttsReady}
-          className="flex items-center gap-2 rounded-full bg-amber-500/10 text-amber-200/80 border border-amber-500/30 px-4 py-2 text-xs font-semibold disabled:opacity-40 hover:bg-amber-500/20 transition"
+          className="btn btn-secondary"
         >
-          <span aria-hidden>🐢</span> 0.7x スロー
+          🐢 0.7x
         </button>
         <button
           type="button"
           onClick={() => setShowTranslation((v) => !v)}
-          className="flex items-center gap-2 rounded-full bg-surface-3 text-amber-100/70 border border-border-soft px-4 py-2 text-xs font-semibold hover:bg-surface-2 transition"
+          className="btn btn-ghost"
         >
           {showTranslation ? '訳を隠す' : '訳を表示'}
         </button>

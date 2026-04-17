@@ -6,30 +6,31 @@ type Props = {
 
 export function SiteHeader({ showNav = true }: Props) {
   return (
-    <header className="sticky top-0 z-30 backdrop-blur-md bg-background/70 border-b border-border-soft">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
-        <Link href="/dashboard" className="flex items-center gap-2 group">
-          <span className="font-display text-xl text-amber-200 group-hover:text-gold transition tracking-widest">
-            INDUSTRY · ENGLISH
-          </span>
+    <header className="sticky top-0 z-30 glass-nav-light">
+      <div className="max-w-[980px] mx-auto px-5 sm:px-6 h-12 flex items-center justify-between gap-4">
+        <Link
+          href="/dashboard"
+          className="text-[14px] tracking-tight font-medium text-apple-fg hover:opacity-80 transition-opacity"
+        >
+          Industry English
         </Link>
         {showNav && (
-          <nav className="flex items-center gap-1 sm:gap-3 text-xs">
+          <nav className="flex items-center gap-1 sm:gap-4 text-[12px] text-apple-fg">
             <Link
               href="/dashboard"
-              className="px-2 py-1 rounded-full text-amber-100/70 hover:text-amber-200 hover:bg-surface-2 transition font-display tracking-wider uppercase"
+              className="px-2 py-1 hover:opacity-70 transition-opacity"
             >
               Home
             </Link>
             <Link
               href="/library"
-              className="px-2 py-1 rounded-full text-amber-100/70 hover:text-amber-200 hover:bg-surface-2 transition font-display tracking-wider uppercase"
+              className="px-2 py-1 hover:opacity-70 transition-opacity"
             >
               Library
             </Link>
             <Link
               href="/upload"
-              className="px-2 py-1 rounded-full text-amber-100/70 hover:text-amber-200 hover:bg-surface-2 transition font-display tracking-wider uppercase"
+              className="px-2 py-1 hover:opacity-70 transition-opacity"
             >
               Upload
             </Link>
@@ -37,14 +38,14 @@ export function SiteHeader({ showNav = true }: Props) {
               href="/settings"
               aria-label="設定"
               title="設定"
-              className="ml-1 inline-flex items-center justify-center w-8 h-8 rounded-full text-amber-100/70 hover:text-amber-200 hover:bg-surface-2 transition"
+              className="ml-1 inline-flex items-center justify-center w-8 h-8 rounded-full hover:bg-apple-gray transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="1.6"
+                strokeWidth="1.4"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 className="w-4 h-4"

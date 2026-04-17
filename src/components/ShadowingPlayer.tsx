@@ -30,7 +30,7 @@ function pickMimeType(): string | undefined {
   for (const type of PREFERRED_MIME_TYPES) {
     if (MediaRecorder.isTypeSupported(type)) return type;
   }
-  return undefined; // browser default
+  return undefined;
 }
 
 export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
@@ -47,7 +47,6 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
 
   const ttsReady = isTTSAvailable();
 
-  // Detect MediaRecorder support up front.
   useEffect(() => {
     if (typeof navigator === 'undefined') return;
     if (
@@ -59,7 +58,6 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
     }
   }, []);
 
-  // Auto-play the example once on mount.
   useEffect(() => {
     if (autoPlayed || !ttsReady) return;
     const t = setTimeout(() => {
@@ -69,13 +67,10 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
     return () => clearTimeout(t);
   }, [autoPlayed, ttsReady, sentence]);
 
-  // Cleanup on unmount: cancel speech, stop tracks, revoke any Blob URL.
   useEffect(() => {
     return () => {
       cancelSpeech();
-      mediaRecorderRef.current?.stream
-        .getTracks()
-        .forEach((t) => t.stop());
+      mediaRecorderRef.current?.stream.getTracks().forEach((t) => t.stop());
       streamRef.current?.getTracks().forEach((t) => t.stop());
       if (recordingUrlRef.current) {
         URL.revokeObjectURL(recordingUrlRef.current);
@@ -96,9 +91,7 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
 
   const stopRecording = () => {
     const recorder = mediaRecorderRef.current;
-    if (recorder && recorder.state !== 'inactive') {
-      recorder.stop();
-    }
+    if (recorder && recorder.state !== 'inactive') recorder.stop();
   };
 
   const startRecording = async () => {
@@ -150,9 +143,7 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
   };
 
   const handlePlayRecording = () => {
-    audioRef.current?.play().catch(() => {
-      // Autoplay rejection — user can press the inline audio control instead.
-    });
+    audioRef.current?.play().catch(() => undefined);
   };
 
   const handleResetRecording = () => {
@@ -161,26 +152,23 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
   };
 
   return (
-    <section className="w-full max-w-xl mx-auto rounded-3xl border border-border-soft bg-surface-1/80 backdrop-blur p-6 sm:p-8">
-      <div className="text-[10px] font-display tracking-widest uppercase text-gold mb-3">
-        シャドウイング
+    <section className="w-full rounded-[18px] bg-apple-black text-apple-fg-on-dark px-7 sm:px-10 py-10 sm:py-12 fade-up">
+      <div className="t-eyebrow text-[var(--accent-on-dark)] mb-3">
+        Shadowing
       </div>
-      <p className="text-lg sm:text-xl leading-relaxed text-amber-50 font-light mb-2">
+      <p className="t-subtitle leading-snug text-white mb-3 font-normal">
         {sentence}
       </p>
-      <p className="text-xs text-amber-100/60 leading-relaxed mb-6">
-        {translation}
-      </p>
+      <p className="t-small text-apple-fg-on-dark-2 mb-8">{translation}</p>
 
-      {/* Primary controls */}
-      <div className="flex flex-wrap gap-3 mb-5">
+      <div className="flex flex-wrap gap-3 mb-6">
         <button
           type="button"
           onClick={handleReplayExample}
           disabled={!ttsReady}
-          className="flex items-center gap-2 rounded-full bg-amber-500/20 text-amber-200 border border-amber-500/40 px-4 py-2 text-sm font-semibold disabled:opacity-40 hover:bg-amber-500/30 transition"
+          className="btn btn-on-dark-secondary"
         >
-          <span aria-hidden>▶</span> お手本を再生
+          ▶ お手本を再生
         </button>
 
         {recState === 'recording' ? (
@@ -188,26 +176,23 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
             type="button"
             onClick={stopRecording}
             aria-pressed="true"
-            className="flex items-center gap-2 rounded-full bg-red-500 text-white border border-red-400 px-4 py-2 text-sm font-semibold pulse-amber animate-pulse"
+            className="btn btn-on-dark-primary"
           >
-            <span aria-hidden>⏹</span> 録音中... タップで停止
+            <span className="inline-block h-2 w-2 rounded-full bg-white rec-blink" />
+            録音中… タップで停止
           </button>
         ) : recState === 'requesting' ? (
-          <button
-            type="button"
-            disabled
-            className="flex items-center gap-2 rounded-full bg-amber-500/30 text-amber-100 border border-amber-500/40 px-4 py-2 text-sm font-semibold cursor-wait"
-          >
-            <span aria-hidden>…</span> マイク許可待ち
+          <button type="button" disabled className="btn btn-on-dark-secondary">
+            … マイク許可待ち
           </button>
         ) : recState === 'recorded' ? (
           <>
             <button
               type="button"
               onClick={handlePlayRecording}
-              className="flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold px-4 py-2 text-sm hover:brightness-110 transition"
+              className="btn btn-on-dark-primary"
             >
-              <span aria-hidden>▶</span> 再生
+              ▶ 再生
             </button>
             <button
               type="button"
@@ -215,9 +200,9 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
                 handleResetRecording();
                 startRecording();
               }}
-              className="flex items-center gap-2 rounded-full bg-surface-2 text-amber-100 border border-border-soft px-4 py-2 text-sm font-semibold hover:bg-surface-3 transition"
+              className="btn btn-on-dark-secondary"
             >
-              <span aria-hidden>↻</span> もう一度録音
+              ↻ もう一度録音
             </button>
           </>
         ) : recState === 'denied' || recState === 'unsupported' ? (
@@ -225,51 +210,49 @@ export function ShadowingPlayer({ keywordId, sentence, translation }: Props) {
             type="button"
             onClick={startRecording}
             disabled={recState === 'unsupported'}
-            className="flex items-center gap-2 rounded-full bg-amber-500/10 text-amber-200/70 border border-amber-500/30 px-4 py-2 text-sm font-semibold disabled:opacity-40 hover:bg-amber-500/20 transition"
+            className="btn btn-on-dark-secondary"
           >
-            <span aria-hidden>🎤</span> 再試行
+            🎤 再試行
           </button>
         ) : (
           <button
             type="button"
             onClick={startRecording}
-            className="flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold px-4 py-2 text-sm hover:brightness-110 transition"
+            className="btn btn-on-dark-primary"
           >
-            <span aria-hidden>🎤</span> 録音する
+            🎤 録音する
           </button>
         )}
       </div>
 
-      {/* Recorded audio + controls */}
       {recState === 'recorded' && recordingUrl && (
-        <div className="rounded-2xl bg-surface-2 border border-border-soft p-4">
-          <div className="text-[10px] font-display tracking-widest uppercase text-gold mb-2">
+        <div className="rounded-xl bg-white/5 border border-white/10 p-4">
+          <div className="t-eyebrow text-apple-fg-on-dark-2 mb-2">
             あなたの録音
           </div>
           <audio ref={audioRef} controls src={recordingUrl} className="w-full" />
-          <p className="text-[11px] text-amber-100/60 mt-2">
+          <p className="t-caption text-apple-fg-on-dark-2 mt-2">
             お手本と聴き比べてみましょう。
           </p>
         </div>
       )}
 
-      {/* Error states */}
       {recState === 'denied' && (
-        <div className="rounded-2xl border border-red-500/40 bg-red-700/15 p-4 text-sm text-red-100">
+        <div className="rounded-xl bg-white/5 border border-white/10 p-4 t-body text-white">
           🎤 マイクへのアクセスを許可してください。
-          <p className="text-[11px] text-red-200/70 mt-1">
+          <p className="t-small text-apple-fg-on-dark-2 mt-1">
             ブラウザのアドレスバー横のサイト設定からマイクを許可した後、再試行してください。
           </p>
         </div>
       )}
       {recState === 'unsupported' && (
-        <p className="text-[11px] text-amber-100/50">
+        <p className="t-small text-apple-fg-on-dark-2">
           このブラウザでは録音機能をご利用いただけません。
         </p>
       )}
 
       {count > 0 && (
-        <p className="text-[11px] text-amber-200/60 mt-4 font-display tracking-wider">
+        <p className="t-caption text-apple-fg-on-dark-2 mt-6">
           通算シャドウイング回数: {count}
         </p>
       )}

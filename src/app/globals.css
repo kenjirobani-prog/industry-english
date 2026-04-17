@@ -1,111 +1,281 @@
 @import "tailwindcss";
 
-/* -------------------------------------------------------------------------
- * Color tokens are wired so existing `amber-*` / `gold` Tailwind classes
- * resolve through CSS variables. We override those vars per industry on
- * `<html data-industry="...">` to swap the entire palette without touching
- * components. Default = F&B (amber/gold).
- * ------------------------------------------------------------------------- */
+/* -----------------------------------------------------------------------
+ * Apple-inspired design system. Base UI is light/black/gray neutral; the
+ * `--accent` variable swaps per industry on `<html data-industry="...">`.
+ * --------------------------------------------------------------------- */
 
 :root {
-  --background: #0b0907;
-  --foreground: #f4ecd8;
+  --apple-white: #ffffff;
+  --apple-black: #000000;
+  --apple-gray: #f5f5f7;
+  --apple-gray-2: #e8e8ed;
+  --apple-fg: #1d1d1f;
+  --apple-fg-2: #6e6e73;
+  --apple-fg-on-dark: #f5f5f7;
+  --apple-fg-on-dark-2: #a1a1a6;
+  --apple-line: #d2d2d7;
+  --apple-line-dark: #424245;
 
-  /* F&B (default) palette */
-  --amber-50: #fff8e6;
-  --amber-200: #ffe9a8;
-  --amber-400: #f5b042;
-  --amber-500: #d98e1f;
-  --amber-600: #a96510;
-  --gold: #c9a35b;
-
-  --surface-1: #161009;
-  --surface-2: #1f180e;
-  --surface-3: #2a2014;
-  --border-soft: rgba(201, 163, 91, 0.18);
-
-  /* Backdrop tints (industry-aware) */
-  --backdrop-1: rgba(217, 142, 31, 0.12);
-  --backdrop-2: rgba(201, 163, 91, 0.08);
+  /* Accent — default = Digital Marketing (Apple Blue family) */
+  --accent: #0071e3;
+  --accent-strong: #0066cc;
+  --accent-on-dark: #2997ff;
+  --accent-soft: rgba(0, 113, 227, 0.08);
 }
 
-/* Digital Marketing — blue palette */
-[data-industry='digital-marketing'] {
-  --background: #06080d;
-  --foreground: #e6efff;
-
-  --amber-50: #eff6ff;
-  --amber-200: #bfdbfe;
-  --amber-400: #60a5fa;
-  --amber-500: #3b82f6;
-  --amber-600: #1d4ed8;
-  --gold: #38bdf8;
-
-  --surface-1: #0c1322;
-  --surface-2: #111a2e;
-  --surface-3: #182441;
-  --border-soft: rgba(96, 165, 250, 0.22);
-
-  --backdrop-1: rgba(59, 130, 246, 0.14);
-  --backdrop-2: rgba(56, 189, 248, 0.08);
+/* F&B accent override */
+[data-industry='fnb'] {
+  --accent: #b07e1e;
+  --accent-strong: #8e651a;
+  --accent-on-dark: #d99a39;
+  --accent-soft: rgba(176, 126, 30, 0.10);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-amber-50: var(--amber-50);
-  --color-amber-100: var(--amber-50);
-  --color-amber-200: var(--amber-200);
-  --color-amber-300: var(--amber-200);
-  --color-amber-400: var(--amber-400);
-  --color-amber-500: var(--amber-500);
-  --color-amber-600: var(--amber-600);
-  --color-gold: var(--gold);
-  --color-surface-1: var(--surface-1);
-  --color-surface-2: var(--surface-2);
-  --color-surface-3: var(--surface-3);
-  --color-border-soft: var(--border-soft);
-  --font-display: var(--font-display);
-  --font-body: var(--font-body);
+  --color-apple-white: var(--apple-white);
+  --color-apple-black: var(--apple-black);
+  --color-apple-gray: var(--apple-gray);
+  --color-apple-gray-2: var(--apple-gray-2);
+  --color-apple-fg: var(--apple-fg);
+  --color-apple-fg-2: var(--apple-fg-2);
+  --color-apple-fg-on-dark: var(--apple-fg-on-dark);
+  --color-apple-fg-on-dark-2: var(--apple-fg-on-dark-2);
+  --color-apple-line: var(--apple-line);
+  --color-apple-line-dark: var(--apple-line-dark);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-on-dark: var(--accent-on-dark);
+  --color-accent-soft: var(--accent-soft);
 }
 
 html, body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--apple-white);
+  color: var(--apple-fg);
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  background-image:
-    radial-gradient(circle at 15% 0%, var(--backdrop-1), transparent 55%),
-    radial-gradient(circle at 85% 100%, var(--backdrop-2), transparent 60%);
-  background-attachment: fixed;
+  font-family:
+    "SF Pro Text", "SF Pro Display",
+    -apple-system, BlinkMacSystemFont,
+    "Helvetica Neue", Helvetica, Arial,
+    "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo",
+    sans-serif;
+  font-size: 17px;
+  line-height: 1.47;
+  letter-spacing: -0.022em;
 }
 
-.font-display {
-  font-family: var(--font-display), ui-serif, Georgia, serif;
-  letter-spacing: 0.02em;
+/* ---------- Typography utilities ---------- */
+
+.t-hero {
+  font-size: clamp(40px, 7vw, 80px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
 }
+.t-headline {
+  font-size: clamp(32px, 5.5vw, 56px);
+  font-weight: 600;
+  line-height: 1.07;
+  letter-spacing: -0.005em;
+}
+.t-section-title {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 600;
+  line-height: 1.10;
+  letter-spacing: -0.008em;
+}
+.t-subtitle {
+  font-size: clamp(20px, 2.4vw, 24px);
+  font-weight: 600;
+  line-height: 1.20;
+  letter-spacing: -0.005em;
+}
+.t-body {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.47;
+  letter-spacing: -0.022em;
+}
+.t-body-lg {
+  font-size: clamp(18px, 1.8vw, 21px);
+  font-weight: 400;
+  line-height: 1.43;
+  letter-spacing: -0.016em;
+}
+.t-small {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.43;
+  letter-spacing: -0.016em;
+}
+.t-caption {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.33;
+}
+.t-eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.33;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ---------- Section helpers ---------- */
+
+.section {
+  padding: clamp(48px, 8vw, 96px) 22px;
+}
+.section-narrow {
+  max-width: 692px;
+  margin-inline: auto;
+}
+.section-wide {
+  max-width: 980px;
+  margin-inline: auto;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 980px;
+  padding: 12px 22px;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  transition: filter 200ms ease-out, background-color 200ms ease-out,
+    color 200ms ease-out, border-color 200ms ease-out;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+}
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+.btn-secondary:hover { background: var(--accent-soft); }
+.btn-on-dark-primary {
+  background: var(--accent-on-dark);
+  color: #fff;
+  border: 1px solid var(--accent-on-dark);
+}
+.btn-on-dark-primary:hover { filter: brightness(1.08); }
+.btn-on-dark-secondary {
+  background: transparent;
+  color: var(--accent-on-dark);
+  border: 1px solid var(--accent-on-dark);
+}
+.btn-on-dark-secondary:hover { background: rgba(255, 255, 255, 0.08); }
+.btn-ghost {
+  background: transparent;
+  color: var(--apple-fg);
+  border: 1px solid var(--apple-line);
+}
+.btn-ghost:hover { background: var(--apple-gray); }
+.btn[disabled],
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: none !important;
+}
+
+/* Inline link with chevron — Apple "Learn more ›" style */
+.link-chev {
+  color: var(--accent-strong);
+  font-weight: 400;
+  letter-spacing: -0.016em;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.link-chev:hover { text-decoration: underline; }
+.link-chev::after {
+  content: "›";
+  font-size: 1.25em;
+  line-height: 1;
+  transition: transform 200ms ease-out;
+}
+.link-chev:hover::after { transform: translateX(2px); }
+.link-chev-on-dark { color: var(--accent-on-dark); }
+
+/* ---------- Form ---------- */
+
+.input {
+  width: 100%;
+  background: var(--apple-gray);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--apple-fg);
+  transition: background 200ms ease-out, border-color 200ms ease-out;
+  outline: none;
+}
+.input::placeholder { color: var(--apple-fg-2); }
+.input:focus {
+  background: var(--apple-white);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* ---------- Glassmorphism nav ---------- */
+
+.glass-nav-light {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--apple-line);
+}
+
+/* ---------- Subtle motion ---------- */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fade-in 320ms ease-out both; }
+.fade-up { animation: fade-up 360ms ease-out both; }
+
+/* Quiet recording indicator (only allowed continuous animation) */
+@keyframes rec-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+.rec-blink { animation: rec-blink 1.2s ease-in-out infinite; }
+
+/* ---------- Scrollbar (subtle) ---------- */
 
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
-::-webkit-scrollbar-track {
-  background: var(--surface-1);
-}
 ::-webkit-scrollbar-thumb {
-  background: var(--surface-3);
+  background: var(--apple-gray-2);
   border-radius: 999px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: var(--gold);
-}
-
-@keyframes pulse-amber {
-  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--amber-500) 55%, transparent); }
-  50%      { box-shadow: 0 0 0 12px color-mix(in srgb, var(--amber-500) 0%, transparent); }
-}
-.pulse-amber {
-  animation: pulse-amber 1.6s ease-out infinite;
-}
+::-webkit-scrollbar-thumb:hover { background: var(--apple-line); }

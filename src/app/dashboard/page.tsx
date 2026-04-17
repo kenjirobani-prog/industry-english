@@ -43,7 +43,7 @@ export default function DashboardPage() {
 
   if (!hydrated || !industryId) {
     return (
-      <main className="flex-1 flex items-center justify-center text-amber-200/60 font-display tracking-widest text-sm">
+      <main className="flex-1 flex items-center justify-center text-apple-fg-2 t-small">
         Loading…
       </main>
     );
@@ -58,108 +58,99 @@ export default function DashboardPage() {
     <>
       <SiteHeader />
       <main className="flex-1">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
-          <div className="mb-6">
+        {/* Hero */}
+        <section className="section bg-apple-white">
+          <div className="section-wide fade-in">
             <Link
               href="/settings"
-              className="inline-flex items-center gap-2 text-[11px] text-amber-100/60 hover:text-amber-200 transition mb-3 group"
+              className="inline-flex items-center gap-2 t-caption text-apple-fg-2 hover:text-apple-fg transition-colors mb-6"
             >
               <span aria-hidden>⚙</span>
               <span>
                 {industryName ?? '—'}
-                <span className="mx-1.5 text-amber-100/30">·</span>
+                <span className="mx-2 text-apple-line">·</span>
                 {activeSceneIds.length} シーン選択中
               </span>
-              <span className="text-amber-100/40 group-hover:text-amber-200 transition">
-                変更 ›
-              </span>
+              <span className="text-apple-fg-2">›</span>
             </Link>
-            <div className="font-display tracking-[0.3em] text-[11px] text-gold uppercase mb-1">
-              Today
-            </div>
-            <h1 className="font-display text-3xl text-amber-100">
-              おかえりなさい
+            <p className="t-eyebrow text-apple-fg-2 mb-3">Today</p>
+            <h1 className="t-headline text-apple-fg">
+              おかえりなさい。<br />
+              続きから学びましょう。
             </h1>
           </div>
+        </section>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-10">
-            <div className="rounded-2xl border border-border-soft bg-surface-1 p-4">
-              <div className="text-[10px] font-display uppercase tracking-widest text-amber-200/60">
-                習得キーワード
-              </div>
-              <div className="font-display text-3xl text-amber-200 mt-1">
+        {/* Stats */}
+        <section className="section bg-apple-gray pt-12 pb-12">
+          <div className="section-wide grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div>
+              <div className="t-caption text-apple-fg-2">習得キーワード</div>
+              <div className="t-section-title text-apple-fg mt-1">
                 {masteredCount}
-                <span className="text-sm text-amber-100/40"> / {totalKeywords}</span>
+                <span className="t-body text-apple-fg-2"> / {totalKeywords}</span>
               </div>
             </div>
-            <div className="rounded-2xl border border-border-soft bg-surface-1 p-4">
-              <div className="text-[10px] font-display uppercase tracking-widest text-amber-200/60">
-                ブックマーク
-              </div>
-              <div className="font-display text-3xl text-amber-200 mt-1">
+            <div>
+              <div className="t-caption text-apple-fg-2">ブックマーク</div>
+              <div className="t-section-title text-apple-fg mt-1">
                 {bookmarkCount}
               </div>
             </div>
-            <div className="rounded-2xl border border-border-soft bg-surface-1 p-4 col-span-2 sm:col-span-1">
-              <div className="text-[10px] font-display uppercase tracking-widest text-amber-200/60">
-                対象シーン
-              </div>
-              <div className="font-display text-3xl text-amber-200 mt-1">
+            <div className="col-span-2 sm:col-span-1">
+              <div className="t-caption text-apple-fg-2">対象シーン</div>
+              <div className="t-section-title text-apple-fg mt-1">
                 {activeSceneIds.length}
               </div>
             </div>
           </div>
+        </section>
 
-          {/* Today's lessons */}
-          <section className="mb-12">
-            <div className="flex items-baseline justify-between mb-4">
-              <h2 className="font-display text-lg text-amber-200 tracking-wider uppercase">
-                今日のレッスン
-              </h2>
-              <Link
-                href="/library"
-                className="text-xs text-amber-100/60 hover:text-amber-200 font-display tracking-wider uppercase"
-              >
-                Library →
+        {/* Today's lessons */}
+        <section className="section bg-apple-white">
+          <div className="section-wide">
+            <div className="flex items-baseline justify-between mb-8">
+              <h2 className="t-section-title text-apple-fg">今日のレッスン</h2>
+              <Link href="/library" className="link-chev">
+                Library
               </Link>
             </div>
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-3">
               {todayScenes.map((scene) => {
                 const kws = getKeywordsByScene(scene.id);
                 return (
                   <Link
                     key={scene.id}
                     href={`/lesson/${scene.id}`}
-                    className="group rounded-3xl border border-border-soft bg-gradient-to-br from-surface-1 to-surface-2 p-5 hover:border-amber-400/60 hover:from-surface-2 transition"
+                    className="group rounded-xl border border-apple-line bg-apple-white hover:bg-apple-gray transition-colors p-7"
                   >
-                    <div className="flex items-start justify-between mb-3">
-                      <span className="text-3xl">{scene.emoji}</span>
-                      <span className="text-[10px] font-display uppercase tracking-widest text-amber-200/50">
+                    <div className="flex items-start justify-between mb-4">
+                      <span className="text-3xl" aria-hidden>
+                        {scene.emoji}
+                      </span>
+                      <span className="t-caption text-apple-fg-2">
                         {kws.length} keywords
                       </span>
                     </div>
-                    <div className="font-display text-lg text-amber-100 mb-1 group-hover:text-amber-200 transition">
+                    <div className="t-subtitle text-apple-fg mb-1">
                       {scene.name_ja}
                     </div>
-                    <div className="text-[11px] text-amber-100/60 leading-relaxed mb-4">
+                    <div className="t-small text-apple-fg-2 mb-5 leading-snug">
                       {scene.description_ja}
                     </div>
-                    <div className="text-xs text-amber-400 font-display tracking-wider uppercase">
-                      Start lesson ▸
-                    </div>
+                    <span className="link-chev t-small">Start lesson</span>
                   </Link>
                 );
               })}
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* Other scenes */}
-          {allScenes.length > activeSceneIds.length && (
-            <section className="mb-12">
-              <h2 className="font-display text-base text-amber-200/70 tracking-wider uppercase mb-3">
-                その他のシーン
-              </h2>
+        {/* Other scenes */}
+        {allScenes.length > activeSceneIds.length && (
+          <section className="section bg-apple-gray pt-16 pb-16">
+            <div className="section-wide">
+              <h2 className="t-subtitle text-apple-fg mb-5">その他のシーン</h2>
               <div className="flex flex-wrap gap-2">
                 {allScenes
                   .filter((s) => !activeSceneIds.includes(s.id))
@@ -167,29 +158,36 @@ export default function DashboardPage() {
                     <Link
                       key={s.id}
                       href={`/lesson/${s.id}`}
-                      className="text-xs rounded-full border border-border-soft bg-surface-1 hover:border-amber-500/50 hover:bg-surface-2 px-3 py-1.5 text-amber-100/70 transition"
+                      className="t-small rounded-full border border-apple-line bg-apple-white hover:bg-apple-gray-2 px-4 py-2 text-apple-fg transition-colors"
                     >
                       {s.emoji} {getScene(s.id)?.name_ja}
                     </Link>
                   ))}
               </div>
-            </section>
-          )}
+            </div>
+          </section>
+        )}
 
-          {/* CTA: Upload */}
-          <Link
-            href="/upload"
-            className="block rounded-3xl border border-dashed border-amber-500/40 bg-amber-500/5 p-6 text-center hover:bg-amber-500/10 transition"
-          >
-            <div className="text-2xl mb-1">📄</div>
-            <div className="font-display text-amber-200 tracking-wider uppercase text-sm">
-              あなたの資料からキーワードを抽出
-            </div>
-            <div className="text-[11px] text-amber-100/60 mt-1">
-              PDF / PPTX / DOCX / TXT
-            </div>
-          </Link>
-        </div>
+        {/* Upload CTA — immersive black */}
+        <section className="section bg-apple-black">
+          <div className="section-wide text-center fade-up">
+            <p className="t-eyebrow text-[var(--accent-on-dark)] mb-3">
+              Personalize
+            </p>
+            <h2 className="t-section-title text-white">
+              あなたの資料・URLから
+              <br className="sm:hidden" />
+              キーワードを抽出。
+            </h2>
+            <p className="t-body-lg text-apple-fg-on-dark-2 mt-5 mb-8 max-w-[560px] mx-auto">
+              ピッチ資料、業界ニュース、契約書—
+              あなた専用のレッスンを生成します。
+            </p>
+            <Link href="/upload" className="btn btn-on-dark-primary">
+              Upload を開く
+            </Link>
+          </div>
+        </section>
       </main>
     </>
   );

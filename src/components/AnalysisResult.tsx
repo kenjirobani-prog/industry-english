@@ -10,16 +10,19 @@ type Props = {
   result: AnalysisResult;
 };
 
-function FrequencyStars({ value }: { value: number }) {
+function FrequencyDots({ value }: { value: number }) {
   return (
-    <div className="flex gap-0.5" aria-label={`頻度 ${value}/5`}>
+    <div
+      className="flex items-center gap-1"
+      aria-label={`頻度 ${value}/5`}
+    >
       {[1, 2, 3, 4, 5].map((i) => (
         <span
           key={i}
-          className={`text-xs ${i <= value ? 'text-amber-400' : 'text-surface-3'}`}
-        >
-          ★
-        </span>
+          className={`block h-1.5 w-1.5 rounded-full ${
+            i <= value ? 'bg-[var(--accent)]' : 'bg-apple-line'
+          }`}
+        />
       ))}
     </div>
   );
@@ -30,36 +33,30 @@ function KeywordRow({ kw }: { kw: ExtractedKeyword }) {
   const ttsReady = isTTSAvailable();
 
   return (
-    <article className="rounded-2xl border border-border-soft bg-surface-1 p-4">
-      <div className="flex items-start justify-between gap-3 mb-2">
+    <article className="rounded-xl border border-apple-line bg-apple-white p-6">
+      <div className="flex items-start justify-between gap-4 mb-2">
         <div className="min-w-0">
-          <div className="font-display text-lg text-amber-200 truncate">
-            {kw.term}
-          </div>
-          <div className="text-xs text-amber-100/70 mt-0.5">
-            {kw.meaning_ja}
-          </div>
+          <div className="t-subtitle text-apple-fg">{kw.term}</div>
+          <div className="t-small text-apple-fg-2 mt-0.5">{kw.meaning_ja}</div>
         </div>
-        <div className="flex flex-col items-end gap-1 shrink-0">
-          <FrequencyStars value={kw.frequency} />
+        <div className="flex flex-col items-end gap-2 shrink-0">
+          <FrequencyDots value={kw.frequency} />
           <button
             type="button"
             onClick={() => speak(kw.term, { rate: 0.95 })}
             onMouseLeave={cancelSpeech}
             disabled={!ttsReady}
             aria-label={`${kw.term} を発音`}
-            className="text-amber-300/80 hover:text-amber-200 disabled:opacity-30 text-base"
+            className="t-caption text-apple-fg-2 hover:text-apple-fg transition-colors"
           >
             🔊
           </button>
         </div>
       </div>
 
-      <p className="text-[12px] text-amber-50/80 leading-relaxed border-l-2 border-amber-400/40 pl-2 mb-2">
-        {kw.meaning_industry}
-      </p>
+      <p className="t-body text-apple-fg mt-4">{kw.meaning_industry}</p>
       {kw.meaning_general && (
-        <p className="text-[11px] text-amber-100/55 leading-relaxed border-l border-amber-200/20 pl-2 mb-2">
+        <p className="t-small text-apple-fg-2 mt-2">
           他業界では: {kw.meaning_general}
         </p>
       )}
@@ -67,30 +64,23 @@ function KeywordRow({ kw }: { kw: ExtractedKeyword }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="text-[11px] text-amber-300/70 hover:text-amber-200 mt-1 font-display tracking-wider uppercase"
+        className="link-chev mt-4"
       >
-        {open ? '例文を閉じる ▴' : `例文を見る (${kw.examples.length}) ▾`}
+        {open ? '例文を閉じる' : `例文を見る (${kw.examples.length})`}
       </button>
 
       {open && (
-        <div className="mt-3 space-y-2">
+        <div className="mt-4 space-y-3">
           {kw.examples.map((ex, i) => (
-            <div
-              key={i}
-              className="rounded-xl bg-surface-2 border border-border-soft p-3"
-            >
-              <p className="text-sm text-amber-50 leading-relaxed">
-                {ex.sentence}
-              </p>
-              <p className="text-[11px] text-amber-100/60 leading-relaxed mt-1">
-                {ex.translation}
-              </p>
+            <div key={i} className="rounded-xl bg-apple-gray p-4">
+              <p className="t-body text-apple-fg">{ex.sentence}</p>
+              <p className="t-small text-apple-fg-2 mt-1">{ex.translation}</p>
               <button
                 type="button"
                 onClick={() => speak(ex.sentence, { rate: 0.95 })}
                 onMouseLeave={cancelSpeech}
                 disabled={!ttsReady}
-                className="text-[10px] text-amber-300/70 hover:text-amber-200 mt-2 font-display tracking-wider uppercase"
+                className="link-chev mt-3 text-[12px]"
               >
                 🔊 再生
               </button>
@@ -107,29 +97,27 @@ function QuizItem({ quiz, index }: { quiz: AnalysisQuiz; index: number }) {
   const [submitted, setSubmitted] = useState(false);
 
   return (
-    <article className="rounded-2xl border border-border-soft bg-surface-1 p-4">
-      <div className="text-[10px] font-display tracking-widest uppercase text-gold mb-2">
+    <article className="rounded-xl border border-apple-line bg-apple-white p-6">
+      <div className="t-eyebrow text-[var(--accent-strong)] mb-3">
         Quiz {index + 1}
       </div>
-      <p className="text-sm text-amber-50 leading-relaxed mb-3">
-        {quiz.question}
-      </p>
-      <ul className="space-y-2 mb-3">
+      <p className="t-body text-apple-fg mb-4">{quiz.question}</p>
+      <ul className="space-y-2 mb-4">
         {quiz.choices.map((c, i) => {
           const isSelected = selected === i;
           const isCorrect = i === quiz.correctIndex;
           let cls =
-            'bg-surface-2 border-border-soft text-amber-50 hover:bg-surface-3';
+            'border-apple-line bg-apple-white text-apple-fg hover:bg-apple-gray';
           if (submitted) {
             if (isCorrect) {
-              cls = 'bg-emerald-700/30 border-emerald-500/60 text-emerald-100';
+              cls = 'border-emerald-600 bg-emerald-50 text-emerald-900';
             } else if (isSelected) {
-              cls = 'bg-red-700/30 border-red-500/60 text-red-100';
+              cls = 'border-red-500 bg-red-50 text-red-900';
             } else {
-              cls = 'bg-surface-2/40 border-border-soft text-amber-100/40';
+              cls = 'border-apple-line bg-apple-white text-apple-fg-2';
             }
           } else if (isSelected) {
-            cls = 'bg-amber-500/15 border-amber-400 text-amber-100';
+            cls = 'border-[var(--accent)] bg-accent-soft text-apple-fg';
           }
           return (
             <li key={i}>
@@ -137,7 +125,7 @@ function QuizItem({ quiz, index }: { quiz: AnalysisQuiz; index: number }) {
                 type="button"
                 disabled={submitted}
                 onClick={() => setSelected(i)}
-                className={`w-full text-left rounded-xl border px-3 py-2 text-sm transition ${cls}`}
+                className={`w-full text-left rounded-xl border px-4 py-3 t-body transition-colors ${cls}`}
               >
                 {c}
               </button>
@@ -150,19 +138,19 @@ function QuizItem({ quiz, index }: { quiz: AnalysisQuiz; index: number }) {
           type="button"
           disabled={selected === null}
           onClick={() => setSubmitted(true)}
-          className="w-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold py-2 text-xs disabled:opacity-40 hover:brightness-110 transition font-display tracking-wider uppercase"
+          className="btn btn-primary w-full"
         >
           回答する
         </button>
       ) : (
         <div
-          className={`rounded-xl border px-3 py-2 text-[12px] leading-relaxed ${
+          className={`rounded-xl border px-4 py-3 t-small ${
             selected === quiz.correctIndex
-              ? 'border-emerald-500/40 bg-emerald-700/20 text-emerald-100'
-              : 'border-red-500/40 bg-red-700/20 text-red-100'
+              ? 'border-emerald-600 bg-emerald-50 text-emerald-900'
+              : 'border-red-500 bg-red-50 text-red-900'
           }`}
         >
-          <div className="font-semibold mb-1">
+          <div className="font-medium mb-1">
             {selected === quiz.correctIndex ? '✓ 正解' : '✗ 不正解'}
           </div>
           {quiz.explanation && <div>{quiz.explanation}</div>}
@@ -181,24 +169,22 @@ export function AnalysisResultView({ result }: Props) {
   };
 
   return (
-    <div className="space-y-6">
-      <header className="text-center">
-        <div className="text-[10px] font-display tracking-widest uppercase text-gold">
+    <div className="space-y-12 fade-up">
+      <header>
+        <div className="t-eyebrow text-[var(--accent-strong)] mb-2">
           Analysis Result
         </div>
-        <h2 className="font-display text-xl text-amber-200 mt-1">
-          {result.keywords.length} 個のキーワードを抽出
+        <h2 className="t-section-title text-apple-fg">
+          {result.keywords.length} 個のキーワードを抽出しました
         </h2>
-        <p className="text-[11px] text-amber-100/50 mt-1 truncate">
+        <p className="t-small text-apple-fg-2 mt-2 truncate">
           source: {result.source.ref}
         </p>
       </header>
 
       <section>
-        <h3 className="font-display text-sm text-amber-200/80 tracking-wider uppercase mb-3">
-          キーワード
-        </h3>
-        <div className="space-y-2">
+        <h3 className="t-subtitle text-apple-fg mb-4">キーワード</h3>
+        <div className="space-y-3">
           {result.keywords.map((kw) => (
             <KeywordRow key={kw.term} kw={kw} />
           ))}
@@ -207,10 +193,8 @@ export function AnalysisResultView({ result }: Props) {
 
       {result.quizzes.length > 0 && (
         <section>
-          <h3 className="font-display text-sm text-amber-200/80 tracking-wider uppercase mb-3">
-            理解度クイズ
-          </h3>
-          <div className="space-y-2">
+          <h3 className="t-subtitle text-apple-fg mb-4">理解度クイズ</h3>
+          <div className="space-y-3">
             {result.quizzes.map((q, i) => (
               <QuizItem key={i} quiz={q} index={i} />
             ))}
@@ -218,30 +202,27 @@ export function AnalysisResultView({ result }: Props) {
         </section>
       )}
 
-      <div className="pt-2">
+      <div>
         {savedCount === null ? (
           <button
             type="button"
             onClick={handleSave}
-            className="w-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold py-3 hover:brightness-110 transition font-display tracking-wider uppercase text-sm"
+            className="btn btn-primary w-full"
           >
             ★ キーワードを保存
           </button>
         ) : (
-          <div className="rounded-2xl border border-emerald-500/40 bg-emerald-700/15 p-4 text-center">
-            <p className="text-sm text-emerald-100">
+          <div className="rounded-xl bg-apple-gray p-6 text-center">
+            <p className="t-body text-apple-fg">
               ✓ {savedCount} 個のキーワードをライブラリに保存しました
               {savedCount < result.keywords.length && (
-                <span className="block text-[11px] text-emerald-200/70 mt-1">
+                <span className="block t-small text-apple-fg-2 mt-1">
                   （{result.keywords.length - savedCount} 個は重複していたためスキップ）
                 </span>
               )}
             </p>
-            <Link
-              href="/library"
-              className="inline-block mt-3 text-xs font-display tracking-wider uppercase text-amber-200 hover:text-amber-100"
-            >
-              ライブラリで確認 →
+            <Link href="/library" className="link-chev mt-3 inline-flex">
+              ライブラリで確認
             </Link>
           </div>
         )}

@@ -1,21 +1,6 @@
 import type { Metadata } from 'next';
-import { Cinzel, Outfit } from 'next/font/google';
 import { IndustryThemeProvider } from '@/components/IndustryThemeProvider';
 import './globals.css';
-
-const display = Cinzel({
-  variable: '--font-display',
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-});
-
-const body = Outfit({
-  variable: '--font-body',
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: 'Industry English — 業界英語をあなたの言葉に',
@@ -27,11 +12,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="ja"
-      className={`${display.variable} ${body.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
+    <html lang="ja" className="h-full">
+      <body className="min-h-full flex flex-col bg-apple-white text-apple-fg">
         <IndustryThemeProvider />
         {children}
       </body>
