@@ -1,0 +1,696 @@
+{
+  "industries": [
+    {
+      "id": "fnb",
+      "name_ja": "F&B（食品・飲料）",
+      "name_en": "Food & Beverage",
+      "description_ja": "ウイスキー、スピリッツ、ビバレッジ業界のグローバルビジネス英語",
+      "available": true
+    },
+    {
+      "id": "tech",
+      "name_ja": "テック",
+      "name_en": "Technology",
+      "description_ja": "SaaS、AI、インフラ領域のビジネス英語",
+      "available": false
+    },
+    {
+      "id": "finance",
+      "name_ja": "金融",
+      "name_en": "Finance",
+      "description_ja": "投資銀行、アセットマネジメントのビジネス英語",
+      "available": false
+    },
+    {
+      "id": "pharma",
+      "name_ja": "製薬・ヘルスケア",
+      "name_en": "Pharma & Healthcare",
+      "description_ja": "創薬、臨床、規制対応のビジネス英語",
+      "available": false
+    }
+  ],
+  "scenes": [
+    {
+      "id": "brand-strategy",
+      "industryId": "fnb",
+      "name_ja": "グローバルブランド戦略会議",
+      "name_en": "Global Brand Strategy Meeting",
+      "description_ja": "海外拠点とのWeekly/Monthly会議。ポートフォリオ整理、SKU戦略、市場シェア議論。",
+      "emoji": "🥃"
+    },
+    {
+      "id": "partner-negotiation",
+      "industryId": "fnb",
+      "name_ja": "海外パートナー/ベンダー交渉",
+      "name_en": "Partner / Vendor Negotiation",
+      "description_ja": "JV、ライセンス契約、ディストリビューション契約の議論。",
+      "emoji": "🤝"
+    },
+    {
+      "id": "conference",
+      "industryId": "fnb",
+      "name_ja": "業界カンファレンス / 展示会",
+      "name_en": "Industry Conference / Trade Show",
+      "description_ja": "IWSR、ProWein、Drinktec等でのネットワーキング、トレンドディスカッション。",
+      "emoji": "🎤"
+    },
+    {
+      "id": "dining",
+      "industryId": "fnb",
+      "name_ja": "会食 / 接待",
+      "name_en": "Business Dining / Entertaining",
+      "description_ja": "海外VIP・パートナーとの食事。ウイスキーや飲料の説明、製造工程の説明。",
+      "emoji": "🍽️"
+    }
+  ],
+  "keywords": [
+    {
+      "id": "kw-premiumization",
+      "industryId": "fnb",
+      "sceneIds": ["brand-strategy", "conference"],
+      "term": "premiumization",
+      "meaning_ja": "プレミアム化（上位価格帯商品へのシフト）",
+      "meaning_industry": "A strategic shift of portfolio toward higher-priced, higher-margin SKUs, especially aged or craft expressions in spirits.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Our premiumization strategy is driving double-digit value growth despite flat volume.",
+          "translation": "プレミアム化戦略により、数量は横ばいでも金額ベースで二桁成長を実現しています。",
+          "source": "Global Brand Review (internal)",
+          "scene": "brand-strategy"
+        },
+        {
+          "sentence": "IWSR data confirms that premiumization continues across all major spirits categories.",
+          "translation": "IWSRのデータは、主要スピリッツカテゴリー全体でプレミアム化が継続していることを示しています。",
+          "source": "IWSR 2025 Report",
+          "scene": "conference"
+        }
+      ]
+    },
+    {
+      "id": "kw-sku-rationalization",
+      "industryId": "fnb",
+      "sceneIds": ["brand-strategy"],
+      "term": "SKU rationalization",
+      "meaning_ja": "SKU整理（商品構成の最適化）",
+      "meaning_industry": "The process of pruning underperforming SKUs to reduce complexity and focus resources on priority brands.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "We need to accelerate SKU rationalization to free up listings for the new prestige range.",
+          "translation": "新プレステージレンジの棚を確保するため、SKU整理を加速させる必要があります。",
+          "source": "APAC Commercial Review",
+          "scene": "brand-strategy"
+        },
+        {
+          "sentence": "Post-rationalization, the tail SKUs now represent less than 5% of net sales.",
+          "translation": "整理後、テールSKUは純売上の5%未満まで縮小しました。",
+          "source": "FY25 Portfolio Deck",
+          "scene": "brand-strategy"
+        }
+      ]
+    },
+    {
+      "id": "kw-rtm",
+      "industryId": "fnb",
+      "sceneIds": ["brand-strategy", "partner-negotiation"],
+      "term": "route-to-market",
+      "meaning_ja": "ルート・トゥ・マーケット（流通戦略）",
+      "meaning_industry": "The end-to-end distribution model covering importer, wholesaler, and on-/off-trade channels in a given market.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Our route-to-market in Southeast Asia relies on a single master distributor per country.",
+          "translation": "東南アジアのルート・トゥ・マーケットは、国ごとに単一のマスター・ディストリビューターに依存しています。",
+          "source": "Asia RTM Strategy Doc",
+          "scene": "brand-strategy"
+        },
+        {
+          "sentence": "A direct route-to-market would require us to set up a local sales office.",
+          "translation": "直接販売方式に切り替えるには、現地販売拠点の設立が必要になります。",
+          "source": "JV Discussion Notes",
+          "scene": "partner-negotiation"
+        }
+      ]
+    },
+    {
+      "id": "kw-market-penetration",
+      "industryId": "fnb",
+      "sceneIds": ["brand-strategy"],
+      "term": "market penetration",
+      "meaning_ja": "市場浸透率",
+      "meaning_industry": "The share of target consumers or outlets currently purchasing the brand, often tracked via Nielsen or CGA.",
+      "meaning_general": "A general marketing term — depth of sales into a defined customer base.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "Our market penetration in the on-trade premium segment has grown to 27%.",
+          "translation": "オン・トレードのプレミアム・セグメントにおける市場浸透率は27%まで拡大しました。",
+          "source": "CGA Outlet Data",
+          "scene": "brand-strategy"
+        },
+        {
+          "sentence": "We will prioritize market penetration over new market entry this fiscal year.",
+          "translation": "今年度は新市場参入よりも既存市場の浸透深化を優先します。",
+          "source": "Commercial Plan FY26",
+          "scene": "brand-strategy"
+        }
+      ]
+    },
+    {
+      "id": "kw-concentrate-business",
+      "industryId": "fnb",
+      "sceneIds": ["brand-strategy", "partner-negotiation"],
+      "term": "concentrate business",
+      "meaning_ja": "濃縮原液ビジネス（希釈前の原液をボトラーに供給する事業モデル）",
+      "meaning_industry": "The model where the brand owner sells concentrate or base spirit to a local bottler who finishes and distributes the product. Coca-Cola's classic model.",
+      "meaning_general": "In most contexts, 'concentrate' refers to focusing effort. In F&B, it specifically means the liquid concentrate product.",
+      "frequency": 3,
+      "examples": [
+        {
+          "sentence": "The concentrate business carries higher gross margin but lower absolute revenue per case.",
+          "translation": "濃縮原液ビジネスは粗利率が高いものの、ケースあたりの絶対収益は低くなります。",
+          "source": "Finance Model",
+          "scene": "brand-strategy"
+        },
+        {
+          "sentence": "We should clarify whether this contract covers the concentrate business or the finished goods.",
+          "translation": "この契約が濃縮原液ビジネスをカバーするのか、完成品をカバーするのかを明確にすべきです。",
+          "source": "Legal Review",
+          "scene": "partner-negotiation"
+        }
+      ]
+    },
+    {
+      "id": "kw-portfolio-optimization",
+      "industryId": "fnb",
+      "sceneIds": ["brand-strategy"],
+      "term": "portfolio optimization",
+      "meaning_ja": "ポートフォリオ最適化",
+      "meaning_industry": "Rebalancing the brand portfolio to maximize value growth, typically by tiering brands into priority, invest, and manage-for-cash groups.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "Portfolio optimization will focus capital on our top five global power brands.",
+          "translation": "ポートフォリオ最適化により、グローバルのトップ5パワーブランドに資本を集中させます。",
+          "source": "Investor Day Deck",
+          "scene": "brand-strategy"
+        },
+        {
+          "sentence": "The optimization review identified three tail brands for divestiture.",
+          "translation": "最適化レビューの結果、3つのテールブランドが売却対象として特定されました。",
+          "source": "M&A Memo",
+          "scene": "brand-strategy"
+        }
+      ]
+    },
+    {
+      "id": "kw-volume-value-mix",
+      "industryId": "fnb",
+      "sceneIds": ["brand-strategy"],
+      "term": "volume/value mix",
+      "meaning_ja": "数量・金額構成",
+      "meaning_industry": "How growth breaks down between sheer case volume and unit price/mix — a critical KPI in premiumizing categories.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "The volume/value mix shows that 80% of growth came from price and mix, not volume.",
+          "translation": "数量・金額構成分析によれば、成長の80%は価格とミックスによるもので、数量ではありませんでした。",
+          "source": "Quarterly Review",
+          "scene": "brand-strategy"
+        },
+        {
+          "sentence": "A healthier volume/value mix means premium tiers are outpacing standard.",
+          "translation": "健全な数量・金額構成とは、プレミアム帯がスタンダード帯を上回っていることを意味します。",
+          "source": "Strategy Memo",
+          "scene": "brand-strategy"
+        }
+      ]
+    },
+    {
+      "id": "kw-exclusivity-clause",
+      "industryId": "fnb",
+      "sceneIds": ["partner-negotiation"],
+      "term": "exclusivity clause",
+      "meaning_ja": "独占（排他）条項",
+      "meaning_industry": "A contractual provision granting one party exclusive rights — often per territory, channel, or brand — in a distribution agreement.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "The exclusivity clause should be tied to annual minimum performance thresholds.",
+          "translation": "独占条項は、年間最低パフォーマンス基準と連動させるべきです。",
+          "source": "Contract Draft v3",
+          "scene": "partner-negotiation"
+        },
+        {
+          "sentence": "We're asking for channel-specific exclusivity, not blanket exclusivity across the market.",
+          "translation": "市場全体の独占ではなく、チャネル別の独占を求めています。",
+          "source": "Negotiation Notes",
+          "scene": "partner-negotiation"
+        }
+      ]
+    },
+    {
+      "id": "kw-distribution-rights",
+      "industryId": "fnb",
+      "sceneIds": ["partner-negotiation"],
+      "term": "distribution rights",
+      "meaning_ja": "販売権",
+      "meaning_industry": "The right to import, market, and sell specified SKUs within a defined territory and channel set.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "The distribution rights cover the on-trade only; off-trade is handled by a separate partner.",
+          "translation": "販売権はオン・トレードのみを対象としており、オフ・トレードは別パートナーが担当します。",
+          "source": "Distribution Agreement",
+          "scene": "partner-negotiation"
+        },
+        {
+          "sentence": "We need written consent before sub-licensing any distribution rights.",
+          "translation": "販売権のサブライセンスには書面同意が必要です。",
+          "source": "Legal Memo",
+          "scene": "partner-negotiation"
+        }
+      ]
+    },
+    {
+      "id": "kw-royalty-structure",
+      "industryId": "fnb",
+      "sceneIds": ["partner-negotiation"],
+      "term": "royalty structure",
+      "meaning_ja": "ロイヤリティ構造",
+      "meaning_industry": "How licensing fees are calculated — fixed per case, percentage of net sales, or tiered by volume.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "The royalty structure is a tiered percentage of net sales, starting at 6%.",
+          "translation": "ロイヤリティ構造は純売上に対する段階的パーセンテージで、6%からスタートします。",
+          "source": "License Agreement Term Sheet",
+          "scene": "partner-negotiation"
+        },
+        {
+          "sentence": "We prefer a per-case royalty structure to protect margin if pricing moves.",
+          "translation": "価格が変動した場合の利益率を守るため、ケース単位のロイヤリティ構造を希望します。",
+          "source": "Finance Position Paper",
+          "scene": "partner-negotiation"
+        }
+      ]
+    },
+    {
+      "id": "kw-termination-convenience",
+      "industryId": "fnb",
+      "sceneIds": ["partner-negotiation"],
+      "term": "termination for convenience",
+      "meaning_ja": "便宜上の解約（理由なしでの解約権）",
+      "meaning_industry": "A contractual right to terminate without having to show cause — usually with a defined notice period and transition terms.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "Termination for convenience requires twelve months' written notice.",
+          "translation": "便宜上の解約には12か月の書面通知が必要です。",
+          "source": "Master Agreement",
+          "scene": "partner-negotiation"
+        },
+        {
+          "sentence": "We do not want a unilateral termination-for-convenience clause in a ten-year deal.",
+          "translation": "10年契約で一方的な便宜解約条項を入れることには反対です。",
+          "source": "Negotiation Brief",
+          "scene": "partner-negotiation"
+        }
+      ]
+    },
+    {
+      "id": "kw-moq",
+      "industryId": "fnb",
+      "sceneIds": ["partner-negotiation"],
+      "term": "minimum order quantity",
+      "meaning_ja": "最低発注数量（MOQ）",
+      "meaning_industry": "The smallest quantity a distributor is committed to purchase per order or period, often set to ensure commercial viability.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "The minimum order quantity per shipment is 500 cases for the premium range.",
+          "translation": "プレミアムレンジの最低発注数量は、1出荷あたり500ケースです。",
+          "source": "Commercial Terms",
+          "scene": "partner-negotiation"
+        },
+        {
+          "sentence": "Missing MOQ for two consecutive quarters triggers a performance review.",
+          "translation": "2四半期連続でMOQを下回ると、パフォーマンスレビューが発動します。",
+          "source": "Performance Addendum",
+          "scene": "partner-negotiation"
+        }
+      ]
+    },
+    {
+      "id": "kw-rtd",
+      "industryId": "fnb",
+      "sceneIds": ["conference", "brand-strategy"],
+      "term": "RTD",
+      "meaning_ja": "RTD（Ready-to-Drink、調合済みドリンク）",
+      "meaning_industry": "Ready-to-Drink — pre-mixed alcoholic beverages sold in cans or bottles, a fast-growing category.",
+      "meaning_general": "In software, RTD often means 'Real-Time Data'. In F&B it's always Ready-to-Drink.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "RTD is now the fastest-growing category globally, outpacing spirits and wine.",
+          "translation": "RTDは現在、スピリッツやワインを上回り、世界で最も成長の速いカテゴリーです。",
+          "source": "IWSR 2025",
+          "scene": "conference"
+        },
+        {
+          "sentence": "Our RTD launch will target the 25–34 female demographic in convenience stores.",
+          "translation": "当社のRTDローンチは、コンビニでの25-34歳女性層をターゲットとします。",
+          "source": "Launch Plan",
+          "scene": "brand-strategy"
+        }
+      ]
+    },
+    {
+      "id": "kw-hard-seltzer",
+      "industryId": "fnb",
+      "sceneIds": ["conference"],
+      "term": "hard seltzer",
+      "meaning_ja": "ハードセルツァー（低アルコール炭酸飲料）",
+      "meaning_industry": "A flavored sparkling alcoholic drink, typically 4-6% ABV, low calorie — the category that exploded in the US from 2019.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "Hard seltzer has plateaued in the US but is still growing in Europe and Japan.",
+          "translation": "ハードセルツァーは米国では頭打ちですが、欧州と日本ではまだ成長しています。",
+          "source": "Category Trend Report",
+          "scene": "conference"
+        },
+        {
+          "sentence": "Consumers choose hard seltzer for the 'better-for-you' low-sugar positioning.",
+          "translation": "消費者はハードセルツァーを、低糖質という健康志向のポジショニングから選びます。",
+          "source": "ProWein Panel",
+          "scene": "conference"
+        }
+      ]
+    },
+    {
+      "id": "kw-low-no-alcohol",
+      "industryId": "fnb",
+      "sceneIds": ["conference", "brand-strategy"],
+      "term": "low-and-no alcohol",
+      "meaning_ja": "低アルコール・ノンアルコール（Low & No）",
+      "meaning_industry": "A category covering sub-1.2% ABV (no) and 1.2-3.5% ABV (low) products — driven by moderation and wellness trends.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Low-and-no alcohol will represent 4% of total beverage alcohol by 2028.",
+          "translation": "2028年までに、低アル・ノンアルはアルコール飲料全体の4%を占めると予測されます。",
+          "source": "IWSR Forecast",
+          "scene": "conference"
+        },
+        {
+          "sentence": "We're launching a no-alcohol version of our flagship gin to capture the moderation trend.",
+          "translation": "節度ある飲酒のトレンドを捉えるため、旗艦ジンのノンアル版をローンチします。",
+          "source": "Product Plan",
+          "scene": "brand-strategy"
+        }
+      ]
+    },
+    {
+      "id": "kw-craft-spirits",
+      "industryId": "fnb",
+      "sceneIds": ["conference"],
+      "term": "craft spirits",
+      "meaning_ja": "クラフトスピリッツ（小規模蒸溜所の高付加価値商品）",
+      "meaning_industry": "Small-batch, artisanal spirits from independent distilleries, often commanding premium pricing via provenance storytelling.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "Craft spirits are winning shelf space from mass premium brands.",
+          "translation": "クラフトスピリッツはマス・プレミアムブランドから棚のシェアを奪いつつあります。",
+          "source": "Retail Audit",
+          "scene": "conference"
+        },
+        {
+          "sentence": "The craft spirits movement is reshaping consumer expectations around provenance.",
+          "translation": "クラフトスピリッツの潮流は、産地・由来に対する消費者の期待を変えつつあります。",
+          "source": "Trade Magazine",
+          "scene": "conference"
+        }
+      ]
+    },
+    {
+      "id": "kw-premix",
+      "industryId": "fnb",
+      "sceneIds": ["conference", "brand-strategy"],
+      "term": "premix",
+      "meaning_ja": "プレミックス（調合済み缶・瓶入りカクテル）",
+      "meaning_industry": "Spirit-based pre-mixed cocktails (e.g., canned G&T, highball) — sits within the broader RTD category.",
+      "frequency": 3,
+      "examples": [
+        {
+          "sentence": "Our premix G&T will retail at a 30% premium to competitor RTDs.",
+          "translation": "当社のプレミックスG&Tは、競合RTDに対して30%のプレミアム価格で展開します。",
+          "source": "Pricing Deck",
+          "scene": "brand-strategy"
+        },
+        {
+          "sentence": "Japanese highball premix is a benchmark for the global premix category.",
+          "translation": "日本のハイボール・プレミックスは、グローバル・プレミックス・カテゴリーのベンチマークです。",
+          "source": "Drinktec Presentation",
+          "scene": "conference"
+        }
+      ]
+    },
+    {
+      "id": "kw-on-off-premise",
+      "industryId": "fnb",
+      "sceneIds": ["conference", "brand-strategy"],
+      "term": "on-premise/off-premise",
+      "meaning_ja": "オン・トレード/オフ・トレード（飲食店/小売）",
+      "meaning_industry": "On-premise = consumed at point of sale (bars, restaurants). Off-premise = take-home (supermarkets, liquor stores). Also called on-trade/off-trade.",
+      "meaning_general": "In some industries 'on-premise' means on-site software deployment. In F&B it always means the venue type.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Our brand over-indexes in on-premise and under-indexes in off-premise.",
+          "translation": "当ブランドはオン・トレードで優位、オフ・トレードで劣位にあります。",
+          "source": "Channel Mix Analysis",
+          "scene": "conference"
+        },
+        {
+          "sentence": "We need separate activation plans for on-premise versus off-premise.",
+          "translation": "オン・トレードとオフ・トレードで別々のアクティベーション計画が必要です。",
+          "source": "Commercial Plan",
+          "scene": "brand-strategy"
+        }
+      ]
+    },
+    {
+      "id": "kw-single-malt",
+      "industryId": "fnb",
+      "sceneIds": ["dining"],
+      "term": "single malt",
+      "meaning_ja": "シングルモルト（単一蒸溜所の大麦麦芽のみのウイスキー）",
+      "meaning_industry": "Whisky made from 100% malted barley at a single distillery. The premium benchmark of the Scotch and Japanese whisky world.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "This single malt was distilled in 1998 and bottled after 25 years in sherry casks.",
+          "translation": "このシングルモルトは1998年に蒸溜され、シェリー樽で25年熟成した後に瓶詰めされました。",
+          "source": "Tasting Notes",
+          "scene": "dining"
+        },
+        {
+          "sentence": "Single malts from the Highlands tend to be fruitier than Islay expressions.",
+          "translation": "ハイランド地方のシングルモルトは、アイラ島のものよりフルーティーな傾向があります。",
+          "source": "Brand Ambassador Script",
+          "scene": "dining"
+        }
+      ]
+    },
+    {
+      "id": "kw-cask-strength",
+      "industryId": "fnb",
+      "sceneIds": ["dining"],
+      "term": "cask strength",
+      "meaning_ja": "カスクストレングス（樽出し原酒そのままの度数）",
+      "meaning_industry": "Whisky bottled at the ABV it was at in the cask, without dilution — typically 55-65% ABV.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "This cask-strength bottling comes in at 58.3% ABV, so a drop of water opens it up beautifully.",
+          "translation": "このカスクストレングスは58.3%なので、水を一滴加えると香りが美しく開きます。",
+          "source": "Tasting Host Notes",
+          "scene": "dining"
+        },
+        {
+          "sentence": "Cask strength delivers maximum intensity — not for beginners.",
+          "translation": "カスクストレングスは強度が最大になるため、初心者向きではありません。",
+          "source": "Whisky Seminar",
+          "scene": "dining"
+        }
+      ]
+    },
+    {
+      "id": "kw-age-statement",
+      "industryId": "fnb",
+      "sceneIds": ["dining"],
+      "term": "age statement",
+      "meaning_ja": "エイジ表記（ウイスキーの熟成年数）",
+      "meaning_industry": "The age declared on the label, which legally must match the youngest whisky in the bottle.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "The age statement on this bottle is 18 years, so every drop is at least that old.",
+          "translation": "このボトルのエイジ表記は18年なので、すべての原酒が最低18年熟成です。",
+          "source": "Brand Ambassador Talk",
+          "scene": "dining"
+        },
+        {
+          "sentence": "Rising demand has pushed many brands to drop age statements entirely.",
+          "translation": "需要の高まりにより、多くのブランドがエイジ表記を外す方向に動いています。",
+          "source": "Industry Report",
+          "scene": "dining"
+        }
+      ]
+    },
+    {
+      "id": "kw-tasting-notes",
+      "industryId": "fnb",
+      "sceneIds": ["dining"],
+      "term": "tasting notes",
+      "meaning_ja": "テイスティングノート（香り・味わいの評価コメント）",
+      "meaning_industry": "Structured description of a whisky or wine's nose, palate, and finish — used for marketing, training, and consumer education.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "The tasting notes mention dried apricot on the nose and a long oaky finish.",
+          "translation": "テイスティングノートには、香りにドライアプリコット、余韻に長いオーク香とあります。",
+          "source": "Master of Malt",
+          "scene": "dining"
+        },
+        {
+          "sentence": "Let me walk you through the tasting notes before we start.",
+          "translation": "始める前に、テイスティングノートをご案内します。",
+          "source": "Brand Ambassador Script",
+          "scene": "dining"
+        }
+      ]
+    },
+    {
+      "id": "kw-nose-palate-finish",
+      "industryId": "fnb",
+      "sceneIds": ["dining"],
+      "term": "nose/palate/finish",
+      "meaning_ja": "香り・味わい・余韻（テイスティングの3要素）",
+      "meaning_industry": "The three-phase framework for tasting: nose (aroma), palate (in-mouth flavor), finish (aftertaste).",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "On the nose, honey and vanilla; on the palate, rich toffee; the finish is long and spicy.",
+          "translation": "香りにはハニーとバニラ、味わいにはリッチなトフィー、余韻は長くスパイシーです。",
+          "source": "Tasting Script",
+          "scene": "dining"
+        },
+        {
+          "sentence": "A great whisky has balance across nose, palate, and finish.",
+          "translation": "優れたウイスキーは、香り・味わい・余韻のバランスが取れています。",
+          "source": "Brand Training",
+          "scene": "dining"
+        }
+      ]
+    },
+    {
+      "id": "kw-nas",
+      "industryId": "fnb",
+      "sceneIds": ["dining", "brand-strategy"],
+      "term": "non-age statement (NAS)",
+      "meaning_ja": "ノンエイジ（NAS、熟成年数非表記）",
+      "meaning_industry": "Whiskies without a declared age, blended from multiple vintages to achieve a target flavor profile without stock constraints.",
+      "frequency": 4,
+      "examples": [
+        {
+          "sentence": "This NAS expression showcases our master blender's creativity across 12 to 30 year casks.",
+          "translation": "このNASは、12年から30年まで多様な樽を使ったマスターブレンダーの創造性を表現しています。",
+          "source": "Brand Launch Doc",
+          "scene": "dining"
+        },
+        {
+          "sentence": "NAS lets us respond to demand without age-stock limitations.",
+          "translation": "NASにより、熟成原酒の在庫制約を受けずに需要に対応できます。",
+          "source": "Supply Planning Memo",
+          "scene": "brand-strategy"
+        }
+      ]
+    },
+    {
+      "id": "kw-innovation",
+      "industryId": "fnb",
+      "sceneIds": ["brand-strategy", "conference"],
+      "term": "innovation",
+      "meaning_ja": "イノベーション（F&Bでは新商品リリース）",
+      "meaning_industry": "In F&B, 'innovation' almost always means new product launches — new SKUs, limited editions, category extensions.",
+      "meaning_general": "In Tech or general business, 'innovation' usually means technological or process breakthroughs.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Innovation accounted for 18% of net sales last year, above our 15% target.",
+          "translation": "イノベーション（新商品）は昨年の純売上の18%を占め、15%の目標を上回りました。",
+          "source": "FY Results",
+          "scene": "brand-strategy"
+        },
+        {
+          "sentence": "Our innovation pipeline for next year includes three premium launches.",
+          "translation": "来年のイノベーション・パイプラインには、3つのプレミアム・ローンチが含まれます。",
+          "source": "Innovation Review",
+          "scene": "conference"
+        }
+      ]
+    },
+    {
+      "id": "kw-pipeline",
+      "industryId": "fnb",
+      "sceneIds": ["brand-strategy"],
+      "term": "pipeline",
+      "meaning_ja": "パイプライン（F&Bでは新商品開発ライン）",
+      "meaning_industry": "In F&B, 'pipeline' usually means the sequence of new products in development — from concept to launch.",
+      "meaning_general": "In Tech, 'pipeline' usually means CI/CD build pipelines. In Sales, it means the deal funnel.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "The innovation pipeline is healthier than last year, with six projects in late-stage development.",
+          "translation": "イノベーション・パイプラインは昨年より健全で、6プロジェクトが開発後期にあります。",
+          "source": "Innovation Committee",
+          "scene": "brand-strategy"
+        },
+        {
+          "sentence": "We need to protect the pipeline from short-term P&L pressure.",
+          "translation": "短期的な損益プレッシャーから新商品パイプラインを守る必要があります。",
+          "source": "Leadership Offsite",
+          "scene": "brand-strategy"
+        }
+      ]
+    },
+    {
+      "id": "kw-activation",
+      "industryId": "fnb",
+      "sceneIds": ["brand-strategy", "conference"],
+      "term": "activation",
+      "meaning_ja": "アクティベーション（F&Bでは店頭プロモーション）",
+      "meaning_industry": "In F&B, 'activation' means in-store or on-premise promotional execution — tastings, displays, events, sponsorships.",
+      "meaning_general": "In Tech/SaaS, 'activation' means a user's first meaningful action after signup.",
+      "frequency": 5,
+      "examples": [
+        {
+          "sentence": "Our on-trade activation plan includes 200 bartender engagement events this quarter.",
+          "translation": "オン・トレードのアクティベーション計画には、今四半期中に200件のバーテンダー向けイベントが含まれます。",
+          "source": "Channel Plan",
+          "scene": "brand-strategy"
+        },
+        {
+          "sentence": "The activation at IWSR Hong Kong generated 1,200 qualified trade contacts.",
+          "translation": "IWSR香港でのアクティベーションでは1,200件の有望トレード接点を獲得しました。",
+          "source": "Event Report",
+          "scene": "conference"
+        }
+      ]
+    }
+  ]
+}
