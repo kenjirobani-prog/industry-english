@@ -23,6 +23,7 @@ const KEYS = {
   articlesRead: 'ie:articles-read',
   seenWords: 'ie:seen-words',
   seenPhrases: 'ie:seen-phrases',
+  sceneProgress: 'ie:scene-progress',
 } as const;
 
 function isAvailable(): boolean {
@@ -305,6 +306,97 @@ export function addSeenPhrase(id: string): void {
   const cur = getSeenPhraseIds();
   if (cur.includes(id)) return;
   write(KEYS.seenPhrases, [...cur, id]);
+}
+
+// ---------- Scene progress (per-keyword timestamps) ----------
+
+type SceneProgressMap = Record<
+  string,
+  { keywordTimestamps: Record<string, string> }
+>;
+
+export type SceneCompletion = {
+  studied: number;
+  total: number;
+  isCompleted: boolean;
+  lastStudiedAt: string | null;
+  oldestStudiedAt: string | null;
+};
+
+export function getSceneProgress(sceneId: string): {
+  keywordTimestamps: Record<string, string>;
+} {
+  const all = read<SceneProgressMap>(KEYS.sceneProgress, {});
+  return all[sceneId] ?? { keywordTimestamps: {} };
+}
+
+export function recordKeywordsStudied(
+  sceneId: string,
+  keywordIds: string[],
+  when: string = new Date().toISOString(),
+): void {
+  if (keywordIds.length === 0) return;
+  const all = read<SceneProgressMap>(KEYS.sceneProgress, {});
+  const cur = all[sceneId] ?? { keywordTimestamps: {} };
+  for (const id of keywordIds) cur.keywordTimestamps[id] = when;
+  all[sceneId] = cur;
+  write(KEYS.sceneProgress, all);
+}
+
+export function getSceneCompletion(
+  sceneId: string,
+  totalKeywordIds: string[],
+): SceneCompletion {
+  const { keywordTimestamps } = getSceneProgress(sceneId);
+  const studiedSet = new Set(Object.keys(keywordTimestamps));
+  const studied = totalKeywordIds.filter((id) => studiedSet.has(id)).length;
+  const timestamps = Object.values(keywordTimestamps);
+  const lastStudiedAt =
+    timestamps.length === 0
+      ? null
+      : timestamps.reduce((a, b) => (a > b ? a : b));
+  const oldestStudiedAt =
+    timestamps.length === 0
+      ? null
+      : timestamps.reduce((a, b) => (a < b ? a : b));
+  return {
+    studied,
+    total: totalKeywordIds.length,
+    isCompleted: totalKeywordIds.length > 0 && studied >= totalKeywordIds.length,
+    lastStudiedAt,
+    oldestStudiedAt,
+  };
+}
+
+/**
+ * Pick `goal` keywords for a daily lesson:
+ *  - Unstudied keywords first (in their original order).
+ *  - If not enough, pad with previously-studied ones, oldest-studied first
+ *    (so review surfaces forgotten material).
+ */
+export function pickLessonKeywords<T extends { id: string }>(
+  sceneId: string,
+  allKeywords: T[],
+  goal: number,
+): T[] {
+  if (goal <= 0 || allKeywords.length === 0) return [];
+  const { keywordTimestamps } = getSceneProgress(sceneId);
+  const unstudied = allKeywords.filter((k) => !(k.id in keywordTimestamps));
+  if (unstudied.length >= goal) return unstudied.slice(0, goal);
+  const studied = allKeywords
+    .filter((k) => k.id in keywordTimestamps)
+    .sort((a, b) =>
+      keywordTimestamps[a.id].localeCompare(keywordTimestamps[b.id]),
+    );
+  const need = goal - unstudied.length;
+  return [...unstudied, ...studied.slice(0, need)];
+}
+
+/** Estimated lesson duration in minutes for a given daily goal. */
+export function estimateLessonMinutes(goal: number): number {
+  if (goal <= 3) return 8;
+  if (goal <= 5) return 12;
+  return 20;
 }
 
 // ---------- User keywords (existing) ----------

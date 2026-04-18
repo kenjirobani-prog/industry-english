@@ -24,8 +24,12 @@ import {
   addArticleRead,
   addSeenPhrase,
   addSeenWord,
+  estimateLessonMinutes,
   getDailyGoal,
+  getSceneProgress,
   incrementDailyProgress,
+  pickLessonKeywords,
+  recordKeywordsStudied,
   recordLessonComplete,
   updateStreak,
 } from '@/lib/storage';
@@ -69,9 +73,46 @@ export default function LessonPage({ params }: { params: Params }) {
     [scene],
   );
 
-  // Build the Step 1 deck: word → example → expression for each keyword.
+  // Pick the daily-goal-sized subset for this lesson (deterministic per mount).
+  const [dailyGoal, setLocalDailyGoal] = useState<number>(5);
+  const [lessonKeywords, setLessonKeywords] = useState<typeof sceneKeywords>([]);
+  const [pickedPassage, setPickedPassage] = useState<
+    (typeof scenePassages)[number] | null
+  >(null);
+  const [pickedReading, setPickedReading] = useState<
+    (typeof sceneReadings)[number] | null
+  >(null);
+  const [reviewMode, setReviewMode] = useState(false);
+
+  useEffect(() => {
+    if (!scene || sceneKeywords.length === 0) return;
+    const goal = getDailyGoal();
+    setLocalDailyGoal(goal);
+    const picked = pickLessonKeywords(scene.id, sceneKeywords, goal);
+    setLessonKeywords(picked);
+    const studiedIds = getSceneProgress(scene.id).keywordTimestamps;
+    setReviewMode(picked.length > 0 && picked.every((k) => k.id in studiedIds));
+    if (scenePassages.length > 0) {
+      setPickedPassage(
+        scenePassages[Math.floor(Math.random() * scenePassages.length)],
+      );
+    } else {
+      setPickedPassage(null);
+    }
+    if (sceneReadings.length > 0) {
+      setPickedReading(
+        sceneReadings[Math.floor(Math.random() * sceneReadings.length)],
+      );
+    } else {
+      setPickedReading(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scene?.id]);
+
+  // Build the Step 1 deck for the picked keywords only:
+  // word → example → expression for each picked keyword.
   const learnDeck = useMemo<LearnCard[]>(() => {
-    if (!scene) return [];
+    if (!scene || lessonKeywords.length === 0) return [];
     const usedPhraseIds = new Set<string>();
     const pickPhraseFor = (kw: Keyword, idx: number): Phrase | null => {
       if (scenePhrases.length === 0) return null;
@@ -94,7 +135,7 @@ export default function LessonPage({ params }: { params: Params }) {
       return scenePhrases[idx % scenePhrases.length] ?? null;
     };
     const out: LearnCard[] = [];
-    sceneKeywords.forEach((kw, i) => {
+    lessonKeywords.forEach((kw, i) => {
       out.push({ type: 'word', keyword: kw });
       const example = kw.examples[0];
       if (example) out.push({ type: 'example', keyword: kw, example });
@@ -102,7 +143,13 @@ export default function LessonPage({ params }: { params: Params }) {
       if (phrase) out.push({ type: 'expression', phrase });
     });
     return out;
-  }, [scene, sceneKeywords, scenePhrases]);
+  }, [scene, lessonKeywords, scenePhrases]);
+
+  // Quiz capped at 5 questions max (or fewer if fewer picked keywords).
+  const quizKeywords = useMemo(
+    () => lessonKeywords.slice(0, Math.min(5, lessonKeywords.length)),
+    [lessonKeywords],
+  );
 
   const [step, setStep] = useState<Step>(1);
   const [learnIndex, setLearnIndex] = useState(0);
@@ -146,7 +193,8 @@ export default function LessonPage({ params }: { params: Params }) {
     }
   }, [step, learnIndex, learnDeck]);
 
-  const shortExample = sceneKeywords[0]?.examples[0] ?? null;
+  const shortExample = lessonKeywords[0]?.examples[0] ?? null;
+  const passagesForPractice = pickedPassage ? [pickedPassage] : [];
 
   // Default the shadowing source on entering Step 2.
   useEffect(() => {
@@ -158,12 +206,14 @@ export default function LessonPage({ params }: { params: Params }) {
         translation: shortExample.translation,
       });
       setSelectedSourceKey('short');
-    } else if (scenePassages[0]) {
-      const p = scenePassages[0];
-      setShadowText({ text: p.text, translation: p.translation_ja });
-      setSelectedSourceKey(`passage-${p.id}`);
+    } else if (pickedPassage) {
+      setShadowText({
+        text: pickedPassage.text,
+        translation: pickedPassage.translation_ja,
+      });
+      setSelectedSourceKey(`passage-${pickedPassage.id}`);
     }
-  }, [step, shortExample, scenePassages, shadowText]);
+  }, [step, shortExample, pickedPassage, shadowText]);
 
   if (!scene) {
     return (
@@ -213,7 +263,7 @@ export default function LessonPage({ params }: { params: Params }) {
 
   const handleQuizComplete = (allCorrect: boolean) => {
     if (allCorrect) setQuizCorrect((c) => c + 1);
-    if (quizKeywordIndex < sceneKeywords.length - 1) {
+    if (quizKeywordIndex < quizKeywords.length - 1) {
       setQuizKeywordIndex((i) => i + 1);
     } else {
       setStep(4);
@@ -221,24 +271,25 @@ export default function LessonPage({ params }: { params: Params }) {
   };
 
   const finishLesson = () => {
+    const lessonKeywordIds = lessonKeywords.map((k) => k.id);
     recordLessonComplete({
       sceneId: scene.id,
       completedAt: new Date().toISOString(),
-      keywordIds: sceneKeywords.map((k) => k.id),
+      keywordIds: lessonKeywordIds,
     });
+    recordKeywordsStudied(scene.id, lessonKeywordIds);
     const next = updateStreak();
     setFinalStreak(next.count);
-    const goal = getDailyGoal();
-    setGoalReachedNow(sceneKeywords.length >= goal);
+    setGoalReachedNow(lessonKeywords.length >= dailyGoal);
     setDone(true);
   };
 
   if (done) {
+    const totalQuiz = quizKeywords.length;
     const accuracy =
-      sceneKeywords.length === 0
-        ? 0
-        : Math.round((quizCorrect / sceneKeywords.length) * 100);
-    const wordsAndExpressions = sceneKeywords.length + scenePhrases.length;
+      totalQuiz === 0 ? 0 : Math.round((quizCorrect / totalQuiz) * 100);
+    const expressionCount = learnDeck.filter((c) => c.type === 'expression').length;
+    const wordsAndExpressions = lessonKeywords.length + expressionCount;
     return (
       <>
         <LessonHeader sceneName={scene.name_ja} step={4} totalSteps={4} />
@@ -333,17 +384,24 @@ export default function LessonPage({ params }: { params: Params }) {
   }
 
   const currentLearnCard = learnDeck[learnIndex];
-  const currentQuizKw = sceneKeywords[quizKeywordIndex];
-  const distractors = industryKeywords.filter(
-    (k) => k.id !== currentQuizKw.id,
-  );
-  const currentReading = sceneReadings[readingIndex] ?? null;
+  const currentQuizKw = quizKeywords[quizKeywordIndex];
+  const distractors = currentQuizKw
+    ? industryKeywords.filter((k) => k.id !== currentQuizKw.id)
+    : [];
+  const currentReading = pickedReading ?? sceneReadings[readingIndex] ?? null;
 
   return (
     <>
       <LessonHeader sceneName={scene.name_ja} step={step} totalSteps={4} />
       <main className="flex-1 bg-apple-white">
         <div className="max-w-[692px] mx-auto px-5 sm:px-6 py-8 space-y-6">
+          <div className="flex items-center justify-between t-caption text-apple-fg-2">
+            <span>
+              {reviewMode ? 'Reviewing' : 'Learning'} {lessonKeywords.length}{' '}
+              words today
+            </span>
+            <span>~{estimateLessonMinutes(dailyGoal)} min</span>
+          </div>
           <ProgressBar current={step} total={4} labels={STEP_LABELS} />
 
           {/* Step 1 — Learn */}
@@ -418,7 +476,7 @@ export default function LessonPage({ params }: { params: Params }) {
                       }
                     : null
                 }
-                passages={scenePassages}
+                passages={passagesForPractice}
                 onSelect={(s) => {
                   setSelectedSourceKey(s.key);
                   setShadowText({ text: s.text, translation: s.translation });
@@ -457,7 +515,7 @@ export default function LessonPage({ params }: { params: Params }) {
             <div className="space-y-4">
               <div className="flex items-center justify-between t-caption text-apple-fg-2">
                 <span>
-                  Question {quizKeywordIndex + 1} of {sceneKeywords.length}
+                  Question {quizKeywordIndex + 1} of {quizKeywords.length}
                 </span>
                 <span>Score: {quizCorrect}</span>
               </div>
@@ -473,27 +531,6 @@ export default function LessonPage({ params }: { params: Params }) {
           {/* Step 4 — Read */}
           {step === 4 && currentReading && (
             <div className="space-y-4">
-              {sceneReadings.length > 1 && (
-                <div className="flex flex-wrap gap-2">
-                  {sceneReadings.map((r, i) => {
-                    const active = i === readingIndex;
-                    return (
-                      <button
-                        key={r.id}
-                        type="button"
-                        onClick={() => setReadingIndex(i)}
-                        className={`t-small rounded-full border px-3 py-1.5 transition-colors ${
-                          active
-                            ? 'border-apple-fg bg-apple-fg text-white'
-                            : 'border-apple-line bg-apple-white text-apple-fg hover:bg-apple-gray'
-                        }`}
-                      >
-                        Article {i + 1}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
               <ReadingCard
                 key={currentReading.id}
                 reading={currentReading}

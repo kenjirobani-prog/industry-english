@@ -14,15 +14,19 @@ import {
   getScenes,
 } from '@/lib/data';
 import {
+  estimateLessonMinutes,
+  getDailyGoal,
   getDailyProgress,
   getLessonProgress,
   getReadArticleIds,
   getRecentActivity,
+  getSceneCompletion,
   getSeenPhraseIds,
   getSeenWordIds,
   getStreak,
   getPreferences,
   type DailyProgress,
+  type SceneCompletion,
 } from '@/lib/storage';
 
 function todayKey(): string {
@@ -105,6 +109,10 @@ export default function DashboardPage() {
   });
   const [completedTodayIds, setCompletedTodayIds] = useState<string[]>([]);
   const [lastStudiedMap, setLastStudiedMap] = useState<Record<string, string>>({});
+  const [sceneCompletions, setSceneCompletions] = useState<
+    Record<string, SceneCompletion>
+  >({});
+  const [dailyGoal, setDailyGoalState] = useState<number>(5);
   const [stats, setStats] = useState({
     words: 0,
     expressions: 0,
@@ -127,6 +135,7 @@ export default function DashboardPage() {
     setActiveSceneIds(prefs.sceneIds);
     setStreak(getStreak().count);
     setProgress(getDailyProgress());
+    setDailyGoalState(getDailyGoal());
     const lp = getLessonProgress();
     const today = todayKey();
     setCompletedTodayIds(
@@ -138,6 +147,16 @@ export default function DashboardPage() {
       if (!cur || cur < p.completedAt) last[p.sceneId] = p.completedAt;
     }
     setLastStudiedMap(last);
+    // Per-scene completion (per-keyword timestamps)
+    const completions: Record<string, SceneCompletion> = {};
+    const allScenes = getScenes(prefs.industryId).filter((s) =>
+      prefs.sceneIds.includes(s.id),
+    );
+    for (const s of allScenes) {
+      const ids = getKeywordsByScene(s.id).map((k) => k.id);
+      completions[s.id] = getSceneCompletion(s.id, ids);
+    }
+    setSceneCompletions(completions);
     setStats({
       words: getSeenWordIds().length,
       expressions: getSeenPhraseIds().length,
@@ -154,10 +173,33 @@ export default function DashboardPage() {
     return all.filter((s) => activeSceneIds.includes(s.id));
   }, [industryId, activeSceneIds]);
 
-  const undoneActiveScenes = useMemo(
-    () => activeScenes.filter((s) => !completedTodayIds.includes(s.id)),
-    [activeScenes, completedTodayIds],
-  );
+  // CTA scene priority:
+  //  1. Partial-progress scenes — most recently studied first ("continue")
+  //  2. Not-started scenes (in selection order)
+  //  3. All complete → scene with the oldest first-studied date (most needs review)
+  const nextScene = useMemo(() => {
+    if (activeScenes.length === 0) return null;
+    const partials = activeScenes.filter((s) => {
+      const c = sceneCompletions[s.id];
+      return c && c.studied > 0 && !c.isCompleted;
+    });
+    if (partials.length > 0) {
+      return partials.slice().sort((a, b) => {
+        const ta = sceneCompletions[a.id]?.lastStudiedAt ?? '';
+        const tb = sceneCompletions[b.id]?.lastStudiedAt ?? '';
+        return tb.localeCompare(ta);
+      })[0];
+    }
+    const notStarted = activeScenes.filter(
+      (s) => (sceneCompletions[s.id]?.studied ?? 0) === 0,
+    );
+    if (notStarted.length > 0) return notStarted[0];
+    return activeScenes.slice().sort((a, b) => {
+      const oa = sceneCompletions[a.id]?.oldestStudiedAt ?? '';
+      const ob = sceneCompletions[b.id]?.oldestStudiedAt ?? '';
+      return oa.localeCompare(ob);
+    })[0];
+  }, [activeScenes, sceneCompletions]);
 
   if (!hydrated || !industryId) {
     return (
@@ -169,22 +211,25 @@ export default function DashboardPage() {
 
   const goalReached = progress.goal > 0 && progress.count >= progress.goal;
   const noScenes = activeScenes.length === 0;
-  const hasUndone = undoneActiveScenes.length > 0;
-  const startedToday = completedTodayIds.length > 0;
+  const nextSceneCompletion = nextScene
+    ? sceneCompletions[nextScene.id]
+    : undefined;
+  const nextStudied = nextSceneCompletion?.studied ?? 0;
+  const nextTotal = nextSceneCompletion?.total ?? 0;
+  const nextRemaining = Math.max(0, nextTotal - nextStudied);
+  const isNextSceneCompleted = nextSceneCompletion?.isCompleted ?? false;
 
   // CTA state machine
-  let ctaState: 'no-scenes' | 'goal-reached' | 'continue' | 'start';
+  let ctaState: 'no-scenes' | 'goal-reached' | 'continue' | 'review' | 'start';
   if (noScenes) ctaState = 'no-scenes';
   else if (goalReached) ctaState = 'goal-reached';
-  else if (startedToday && hasUndone) ctaState = 'continue';
+  else if (isNextSceneCompleted) ctaState = 'review';
+  else if (nextStudied > 0) ctaState = 'continue';
   else ctaState = 'start';
 
-  const nextScene = undoneActiveScenes[0] ?? activeScenes[0] ?? null;
-  const nextSceneKwCount = nextScene
-    ? getKeywordsByScene(nextScene.id).length
-    : 0;
   const otherScenes = activeScenes.filter((s) => s.id !== nextScene?.id);
   const weekActiveDays = activity.filter((d) => d.active).length;
+  const lessonMinutes = estimateLessonMinutes(dailyGoal);
 
   const formatLastStudied = (iso: string | undefined): string => {
     if (!iso) return 'Not studied yet';
@@ -298,7 +343,11 @@ export default function DashboardPage() {
                 <div className="t-small text-apple-fg-2 mt-5">
                   {nextScene.name_ja}
                   <span className="mx-2 text-apple-line">·</span>
-                  {nextSceneKwCount} words to learn
+                  {nextRemaining} words remaining
+                </div>
+                <div className="t-caption text-apple-fg-2 mt-2">
+                  約 {lessonMinutes} min ·{' '}
+                  {Math.min(dailyGoal, nextRemaining)} words today
                 </div>
               </div>
             )}
@@ -315,7 +364,33 @@ export default function DashboardPage() {
                   <ArrowRight size={18} strokeWidth={1.6} aria-hidden="true" />
                 </Link>
                 <div className="t-small text-apple-fg-2 mt-5">
-                  あと {undoneActiveScenes.length} シーン残っています
+                  {nextRemaining} words remaining in this scene
+                </div>
+                <div className="t-caption text-apple-fg-2 mt-2">
+                  約 {lessonMinutes} min ·{' '}
+                  {Math.min(dailyGoal, nextRemaining)} words today
+                </div>
+              </div>
+            )}
+
+            {ctaState === 'review' && nextScene && (
+              <div className="text-center fade-up">
+                <div className="t-eyebrow text-[var(--accent-strong)] mb-3">
+                  Review
+                </div>
+                <Link
+                  href={`/lesson/${nextScene.id}`}
+                  className="btn btn-primary"
+                  style={{ padding: '18px 36px', fontSize: '17px' }}
+                >
+                  Review: {nextScene.name_ja}
+                  <ArrowRight size={18} strokeWidth={1.6} aria-hidden="true" />
+                </Link>
+                <div className="t-small text-apple-fg-2 mt-5">
+                  All {nextTotal} words learned. 復習で定着させましょう。
+                </div>
+                <div className="t-caption text-apple-fg-2 mt-2">
+                  約 {lessonMinutes} min · {dailyGoal} words today
                 </div>
               </div>
             )}
@@ -361,32 +436,50 @@ export default function DashboardPage() {
                   const kws = getKeywordsByScene(scene.id);
                   const readings = getReadingsByScene(scene.id);
                   const lastStudied = formatLastStudied(lastStudiedMap[scene.id]);
+                  const c = sceneCompletions[scene.id];
+                  const studied = c?.studied ?? 0;
+                  const total = c?.total ?? kws.length;
+                  const completed = c?.isCompleted ?? false;
                   return (
                     <Link
                       key={scene.id}
                       href={`/lesson/${scene.id}`}
                       className="rounded-xl border border-apple-line bg-apple-white hover:bg-apple-gray transition-colors p-5"
                     >
-                      <div className="t-eyebrow text-apple-fg-2 mb-1">
-                        {scene.name_en}
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <div className="t-eyebrow text-apple-fg-2">
+                          {scene.name_en}
+                        </div>
+                        {completed && (
+                          <span className="t-caption text-[var(--accent-strong)] border border-[var(--accent)]/40 rounded-full px-2 py-0.5">
+                            Completed
+                          </span>
+                        )}
                       </div>
-                      <div className="t-body font-medium text-apple-fg mb-1">
+                      <div className="t-body font-medium text-apple-fg mb-2">
                         {scene.name_ja}
                       </div>
                       <div className="t-caption text-apple-fg-2 flex items-center gap-2 flex-wrap">
-                        <span>{kws.length} words</span>
+                        <span>
+                          {studied}/{total} words completed
+                        </span>
                         {readings.length > 0 && (
-                          <span className="inline-flex items-center gap-1">
-                            <BookOpen
-                              size={11}
-                              strokeWidth={1.6}
-                              aria-hidden="true"
-                            />
-                            {readings.length} articles
-                          </span>
+                          <>
+                            <span aria-hidden>·</span>
+                            <span className="inline-flex items-center gap-1">
+                              <BookOpen
+                                size={11}
+                                strokeWidth={1.6}
+                                aria-hidden="true"
+                              />
+                              {readings.length} articles
+                            </span>
+                          </>
                         )}
                         <span aria-hidden>·</span>
-                        <span>{lastStudied}</span>
+                        <span>
+                          {completed ? 'Review available' : lastStudied}
+                        </span>
                       </div>
                     </Link>
                   );
