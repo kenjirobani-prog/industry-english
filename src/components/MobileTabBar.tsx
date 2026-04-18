@@ -12,7 +12,12 @@ type Item = {
 };
 
 const ITEMS: Item[] = [
-  { href: '/dashboard', label: 'Learn', icon: BookOpen, match: (p) => p === '/dashboard' },
+  {
+    href: '/dashboard',
+    label: 'Learn',
+    icon: BookOpen,
+    match: (p) => p === '/dashboard' || p.startsWith('/lesson'),
+  },
   { href: '/library', label: 'Library', icon: Library, match: (p) => p.startsWith('/library') },
   { href: '/upload', label: 'Upload', icon: Upload, match: (p) => p.startsWith('/upload') },
   { href: '/settings', label: 'Settings', icon: Settings, match: (p) => p.startsWith('/settings') },
@@ -20,9 +25,7 @@ const ITEMS: Item[] = [
 
 export function MobileTabBar() {
   const pathname = usePathname() ?? '';
-
-  // Hide on lesson + onboarding to keep the user focused.
-  if (pathname === '/' || pathname.startsWith('/lesson')) return null;
+  // Always render — header + bottom nav are persistent across every screen.
 
   return (
     <nav

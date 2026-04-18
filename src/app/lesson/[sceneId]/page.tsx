@@ -5,9 +5,7 @@ import { use, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LessonHeader } from '@/components/LessonHeader';
 import { ProgressBar } from '@/components/ProgressBar';
-import { KeywordCard } from '@/components/KeywordCard';
-import { ExampleCard } from '@/components/ExampleCard';
-import { PhraseCard } from '@/components/PhraseCard';
+import { LearnUnifiedCard } from '@/components/LearnUnifiedCard';
 import { PassageSelector } from '@/components/PassageSelector';
 import { ShadowingPlayer } from '@/components/ShadowingPlayer';
 import { QuizCard } from '@/components/QuizCard';
@@ -34,16 +32,11 @@ import {
   updateStreak,
 } from '@/lib/storage';
 import { warmupVoices } from '@/lib/tts';
-import type { Keyword, Phrase, Example } from '@/types';
+import type { Phrase } from '@/types';
 
 const STEP_LABELS = ['Learn', 'Practice', 'Test', 'Read'];
 
 type Step = 1 | 2 | 3 | 4;
-
-type LearnCard =
-  | { type: 'word'; keyword: Keyword }
-  | { type: 'example'; keyword: Keyword; example: Example }
-  | { type: 'expression'; phrase: Phrase };
 
 type Params = Promise<{ sceneId: string }>;
 
@@ -109,13 +102,17 @@ export default function LessonPage({ params }: { params: Params }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scene?.id]);
 
-  // Build the Step 1 deck for the picked keywords only:
-  // word → example → expression for each picked keyword.
-  const learnDeck = useMemo<LearnCard[]>(() => {
-    if (!scene || lessonKeywords.length === 0) return [];
+  // Map each picked keyword to a related phrase (term match preferred,
+  // else round-robin through scene phrases without re-using one twice).
+  const phraseByKeywordId = useMemo<Record<string, Phrase | null>>(() => {
+    if (!scene || lessonKeywords.length === 0) return {};
     const usedPhraseIds = new Set<string>();
-    const pickPhraseFor = (kw: Keyword, idx: number): Phrase | null => {
-      if (scenePhrases.length === 0) return null;
+    const out: Record<string, Phrase | null> = {};
+    lessonKeywords.forEach((kw, idx) => {
+      if (scenePhrases.length === 0) {
+        out[kw.id] = null;
+        return;
+      }
       const lower = kw.term.toLowerCase();
       const match = scenePhrases.find(
         (p) =>
@@ -125,22 +122,15 @@ export default function LessonPage({ params }: { params: Params }) {
       );
       if (match) {
         usedPhraseIds.add(match.id);
-        return match;
+        out[kw.id] = match;
+        return;
       }
-      const fallback = scenePhrases[idx % scenePhrases.length];
-      if (fallback && !usedPhraseIds.has(fallback.id)) {
-        usedPhraseIds.add(fallback.id);
-        return fallback;
-      }
-      return scenePhrases[idx % scenePhrases.length] ?? null;
-    };
-    const out: LearnCard[] = [];
-    lessonKeywords.forEach((kw, i) => {
-      out.push({ type: 'word', keyword: kw });
-      const example = kw.examples[0];
-      if (example) out.push({ type: 'example', keyword: kw, example });
-      const phrase = pickPhraseFor(kw, i);
-      if (phrase) out.push({ type: 'expression', phrase });
+      const fallback =
+        scenePhrases.find((p) => !usedPhraseIds.has(p.id)) ??
+        scenePhrases[idx % scenePhrases.length] ??
+        null;
+      if (fallback) usedPhraseIds.add(fallback.id);
+      out[kw.id] = fallback ?? null;
     });
     return out;
   }, [scene, lessonKeywords, scenePhrases]);
@@ -180,18 +170,17 @@ export default function LessonPage({ params }: { params: Params }) {
     warmupVoices();
   }, []);
 
-  // Track Word/Expression views for daily progress + lifetime stats.
+  // Track Word/Expression for daily progress + lifetime stats whenever
+  // the active Step 1 card changes.
   useEffect(() => {
     if (step !== 1) return;
-    const card = learnDeck[learnIndex];
-    if (!card) return;
-    if (card.type === 'word') {
-      addSeenWord(card.keyword.id);
-      incrementDailyProgress(card.keyword.id);
-    } else if (card.type === 'expression') {
-      addSeenPhrase(card.phrase.id);
-    }
-  }, [step, learnIndex, learnDeck]);
+    const kw = lessonKeywords[learnIndex];
+    if (!kw) return;
+    addSeenWord(kw.id);
+    incrementDailyProgress(kw.id);
+    const phrase = phraseByKeywordId[kw.id];
+    if (phrase) addSeenPhrase(phrase.id);
+  }, [step, learnIndex, lessonKeywords, phraseByKeywordId]);
 
   const shortExample = lessonKeywords[0]?.examples[0] ?? null;
   const passagesForPractice = pickedPassage ? [pickedPassage] : [];
@@ -246,7 +235,7 @@ export default function LessonPage({ params }: { params: Params }) {
 
   // Step transitions
   const handleNextLearnCard = () => {
-    if (learnIndex < learnDeck.length - 1) {
+    if (learnIndex < lessonKeywords.length - 1) {
       setLearnIndex((i) => i + 1);
     } else {
       setStep(2);
@@ -288,7 +277,9 @@ export default function LessonPage({ params }: { params: Params }) {
     const totalQuiz = quizKeywords.length;
     const accuracy =
       totalQuiz === 0 ? 0 : Math.round((quizCorrect / totalQuiz) * 100);
-    const expressionCount = learnDeck.filter((c) => c.type === 'expression').length;
+    const expressionCount = Object.values(phraseByKeywordId).filter(
+      (p) => p !== null,
+    ).length;
     const wordsAndExpressions = lessonKeywords.length + expressionCount;
     return (
       <>
@@ -383,7 +374,10 @@ export default function LessonPage({ params }: { params: Params }) {
     );
   }
 
-  const currentLearnCard = learnDeck[learnIndex];
+  const currentLearnKeyword = lessonKeywords[learnIndex];
+  const currentLearnPhrase = currentLearnKeyword
+    ? phraseByKeywordId[currentLearnKeyword.id] ?? null
+    : null;
   const currentQuizKw = quizKeywords[quizKeywordIndex];
   const distractors = currentQuizKw
     ? industryKeywords.filter((k) => k.id !== currentQuizKw.id)
@@ -404,41 +398,22 @@ export default function LessonPage({ params }: { params: Params }) {
           </div>
           <ProgressBar current={step} total={4} labels={STEP_LABELS} />
 
-          {/* Step 1 — Learn */}
-          {step === 1 && currentLearnCard && (
+          {/* Step 1 — Learn (1 word = 1 unified card) */}
+          {step === 1 && currentLearnKeyword && (
             <div className="space-y-4">
               <div className="flex items-center justify-between t-caption text-apple-fg-2">
                 <span>
-                  Card {learnIndex + 1} of {learnDeck.length}
+                  Card {learnIndex + 1} of {lessonKeywords.length}
                 </span>
-                <span className="t-eyebrow text-apple-fg-2">
-                  {currentLearnCard.type === 'word'
-                    ? 'Word'
-                    : currentLearnCard.type === 'example'
-                      ? 'Example'
-                      : 'Expression'}
-                </span>
+                <span className="t-eyebrow text-apple-fg-2">Word</span>
               </div>
 
-              {currentLearnCard.type === 'word' && (
-                <KeywordCard
-                  key={`word-${currentLearnCard.keyword.id}`}
-                  keyword={currentLearnCard.keyword}
-                />
-              )}
-              {currentLearnCard.type === 'example' && (
-                <ExampleCard
-                  key={`ex-${currentLearnCard.keyword.id}`}
-                  example={currentLearnCard.example}
-                  highlightTerm={currentLearnCard.keyword.term}
-                />
-              )}
-              {currentLearnCard.type === 'expression' && (
-                <PhraseCard
-                  key={`ph-${currentLearnCard.phrase.id}`}
-                  phrase={currentLearnCard.phrase}
-                />
-              )}
+              <LearnUnifiedCard
+                key={currentLearnKeyword.id}
+                keyword={currentLearnKeyword}
+                example={currentLearnKeyword.examples[0]}
+                phrase={currentLearnPhrase}
+              />
 
               <div className="flex items-center justify-between pt-2">
                 <button
@@ -454,7 +429,7 @@ export default function LessonPage({ params }: { params: Params }) {
                   onClick={handleNextLearnCard}
                   className="btn btn-primary"
                 >
-                  {learnIndex === learnDeck.length - 1
+                  {learnIndex === lessonKeywords.length - 1
                     ? 'Practice へ'
                     : 'Next'}
                 </button>
