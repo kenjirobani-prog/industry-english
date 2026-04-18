@@ -6,7 +6,13 @@ import Link from 'next/link';
 import { Check } from 'lucide-react';
 import { SiteHeader } from '@/components/SiteHeader';
 import { getIndustries, getScenes } from '@/lib/data';
-import { getPreferences, setPreferences } from '@/lib/storage';
+import {
+  DEFAULT_DAILY_GOAL,
+  getDailyGoal,
+  getPreferences,
+  setDailyGoal,
+  setPreferences,
+} from '@/lib/storage';
 import type { EnglishLevel } from '@/types';
 
 const LEVELS: { value: EnglishLevel; label: string; sub: string }[] = [
@@ -15,12 +21,19 @@ const LEVELS: { value: EnglishLevel; label: string; sub: string }[] = [
   { value: 'advanced', label: '上級', sub: 'TOEIC 800+' },
 ];
 
+const DAILY_GOALS: { value: 3 | 5 | 10; label: string; sub: string }[] = [
+  { value: 3, label: 'Casual', sub: '3 words / day' },
+  { value: 5, label: 'Regular', sub: '5 words / day' },
+  { value: 10, label: 'Serious', sub: '10 words / day' },
+];
+
 export default function SettingsPage() {
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
   const [industryId, setIndustryId] = useState<string | null>(null);
   const [sceneIds, setSceneIds] = useState<string[]>([]);
   const [level, setLevel] = useState<EnglishLevel>('intermediate');
+  const [dailyGoal, setDailyGoalState] = useState<number>(DEFAULT_DAILY_GOAL);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -32,8 +45,14 @@ export default function SettingsPage() {
     setIndustryId(prefs.industryId);
     setSceneIds(prefs.sceneIds);
     setLevel(prefs.level);
+    setDailyGoalState(getDailyGoal());
     setHydrated(true);
   }, [router]);
+
+  const handleDailyGoalChange = (n: 3 | 5 | 10) => {
+    setDailyGoalState(n);
+    setDailyGoal(n);
+  };
 
   const industries = getIndustries();
   const scenes = industryId ? getScenes(industryId) : [];
@@ -159,6 +178,36 @@ export default function SettingsPage() {
                   少なくとも1つのシーンを選んでください。
                 </p>
               )}
+            </div>
+
+            {/* Daily Goal */}
+            <div>
+              <h2 className="t-subtitle text-apple-fg mb-5">Daily Goal</h2>
+              <div className="grid sm:grid-cols-3 gap-3">
+                {DAILY_GOALS.map((g) => {
+                  const selected = dailyGoal === g.value;
+                  return (
+                    <button
+                      key={g.value}
+                      type="button"
+                      onClick={() => handleDailyGoalChange(g.value)}
+                      className={`text-left rounded-xl border p-5 transition-colors cursor-pointer ${
+                        selected
+                          ? 'border-[var(--accent)] bg-accent-soft'
+                          : 'border-apple-line bg-apple-white hover:bg-apple-gray-2'
+                      }`}
+                    >
+                      <div className="t-body text-apple-fg font-medium mb-1">
+                        {g.label}
+                      </div>
+                      <div className="t-small text-apple-fg-2">{g.sub}</div>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="t-caption text-apple-fg-2 mt-2">
+                変更は即座に保存されます。
+              </p>
             </div>
 
             {/* Level */}

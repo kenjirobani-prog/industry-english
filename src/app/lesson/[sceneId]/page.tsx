@@ -20,7 +20,15 @@ import {
   getReadingsByScene,
   getScene,
 } from '@/lib/data';
-import { recordLessonComplete } from '@/lib/storage';
+import {
+  addArticleRead,
+  addSeenPhrase,
+  addSeenWord,
+  getDailyGoal,
+  incrementDailyProgress,
+  recordLessonComplete,
+  updateStreak,
+} from '@/lib/storage';
 import { warmupVoices } from '@/lib/tts';
 import type { Keyword, Phrase, Example } from '@/types';
 
@@ -117,9 +125,26 @@ export default function LessonPage({ params }: { params: Params }) {
   const [articlesRead, setArticlesRead] = useState(0);
   const [readArticleIds, setReadArticleIds] = useState<Set<string>>(new Set());
 
+  // Streak / goal results captured at lesson completion
+  const [finalStreak, setFinalStreak] = useState(0);
+  const [goalReachedNow, setGoalReachedNow] = useState(false);
+
   useEffect(() => {
     warmupVoices();
   }, []);
+
+  // Track Word/Expression views for daily progress + lifetime stats.
+  useEffect(() => {
+    if (step !== 1) return;
+    const card = learnDeck[learnIndex];
+    if (!card) return;
+    if (card.type === 'word') {
+      addSeenWord(card.keyword.id);
+      incrementDailyProgress(card.keyword.id);
+    } else if (card.type === 'expression') {
+      addSeenPhrase(card.phrase.id);
+    }
+  }, [step, learnIndex, learnDeck]);
 
   const shortExample = sceneKeywords[0]?.examples[0] ?? null;
 
@@ -201,6 +226,10 @@ export default function LessonPage({ params }: { params: Params }) {
       completedAt: new Date().toISOString(),
       keywordIds: sceneKeywords.map((k) => k.id),
     });
+    const next = updateStreak();
+    setFinalStreak(next.count);
+    const goal = getDailyGoal();
+    setGoalReachedNow(sceneKeywords.length >= goal);
     setDone(true);
   };
 
@@ -222,7 +251,23 @@ export default function LessonPage({ params }: { params: Params }) {
               <h1 className="t-headline text-apple-fg mb-3">
                 お疲れさまでした
               </h1>
-              <p className="t-body text-apple-fg-2 mb-10">{scene.name_ja}</p>
+              <p className="t-body text-apple-fg-2 mb-6">{scene.name_ja}</p>
+
+              {finalStreak > 0 && (
+                <div className="inline-flex flex-col items-center gap-2 mb-8">
+                  <div className="flex items-baseline gap-2">
+                    <span className="t-section-title text-[var(--accent-strong)]">
+                      {finalStreak}
+                    </span>
+                    <span className="t-body text-apple-fg-2">day streak</span>
+                  </div>
+                  {goalReachedNow && (
+                    <div className="t-eyebrow text-[var(--accent-strong)]">
+                      Daily goal reached!
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10 text-left">
                 <div className="rounded-xl bg-apple-gray p-5">
@@ -453,6 +498,7 @@ export default function LessonPage({ params }: { params: Params }) {
                 key={currentReading.id}
                 reading={currentReading}
                 onOpen={() => {
+                  addArticleRead(currentReading.id);
                   setReadArticleIds((prev) => {
                     if (prev.has(currentReading.id)) return prev;
                     const next = new Set(prev);
